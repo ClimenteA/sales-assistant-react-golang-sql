@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <title>Sales Assistant</title>
+</head>
+
+<body style="width: 420px;">
+
+    <main class="container">
+
+        <h3>Sales Assistant</h3>
+
+        <p>
+            This chrome extension will run on each page while it's active in search for possible contact information.
+            Once, found it will prompt you to save it.
+            Make sure you have the server accompanion running while doing this.
+        </p>
+
+        <div>
+
+            <a href="http://localhost:3000" target="_blank" style="display: block;" role="button">
+                View collected prospects
+            </a>
+
+            <fieldset style="margin-top: 2rem;">
+                <label style="float: right;">
+                    <input id="content-script-status" type="checkbox" role="switch" checked />
+                    <span id="content-script-text">Active content script</span>
+                </label>
+            </fieldset>
+
+        </div>
+
+
+    </main>
+
+    <script src="./index.js" type="module"></script>
+
+</body>
+
+</html>

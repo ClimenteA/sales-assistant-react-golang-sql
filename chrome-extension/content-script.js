@@ -4,18 +4,14 @@
 
 
 document.addEventListener('contextmenu', function (event) {
-    event.preventDefault()
-    const text = window.getSelection().toString()
-    if (!text) {
-        alert("No text selected!")
-        return
-    }
-    console.log(document.location.host)
-    console.log(document.location.href)
-    console.log(text)
-
-
-
-
-    alert(text)
+    // event.preventDefault()
+    // const text = window.getSelection().toString()
+    // if (!text) {
+    //     alert("No text selected!")
+    //     return
+    // }
+    // console.log(document.location.host)
+    // console.log(document.location.href)
+    // console.log(text)
+    // alert(text)
 })

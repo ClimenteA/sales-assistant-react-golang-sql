@@ -4,7 +4,9 @@
   },
   "dependencies": {
     "drizzle-orm": "^0.30.9",
-    "hono": "^4.2.9"
+    "extract-email-address": "^1.4.0",
+    "hono": "^4.2.9",
+    "phonenumbers-extractor": "^1.1.7"
   },
   "devDependencies": {
     "@types/bun": "latest",

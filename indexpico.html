@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <title>Modal</title>
+</head>
+
+<body>
+
+
+    <div>
+
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+            dialog {
+                font-size: 16px;
+                font-family: "Poppins", 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            }
+        </style>
+
+        <dialog open>
+            <article>
+
+                <h3 style="text-align: center; font-weight: bold;">Add/Update prospect</h3>
+                <p style="color: grey;">
+                    Fields will be updated automatically.
+                    Please correct inconsistencies if any.
+                </p>
+
+                <div style="margin-top: 2rem;">
+
+                    <strong style="display: block; margin-bottom: 0.2rem;">Selected</strong>
+
+                    <p style="font-size: 18px;">
+                        CarXpert Constanta 1.5K followers • 0 following Intro SERVICE AUTO VOPSITORIE TINICHIGERIE
+                        DECONTARE
+                        DIRECTĂ CU ASIGURATORII Page · Vehicle repair shop Interioara 3, incinta COMAT., Constanta,
+                        Romania
+                        0790
+                        667 596 autoqualityrepair@gmail.com Open now
+                    </p>
+
+                    <form style="margin-top: 2rem;">
+
+                        <label>
+                            <strong>Status</strong>
+                            <input type="text" name="status" value="">
+                        </label>
+
+                        <label>
+                            <strong>Tags</strong>
+                            <input type="text" name="tags" value="service auto, no website">
+                        </label>
+
+                        <label>
+                            <strong>Name</strong>
+                            <input autocomplete="off" type="text" name="name" value="CarXpert Constanta">
+                        </label>
+
+                        <label>
+                            <strong>Email</strong>
+                            <input autocomplete="off" type="email" name="email" value="autoqualityrepair@gmail.com">
+                        </label>
+
+                        <label>
+                            <strong>Phone</strong>
+                            <input autocomplete="off" type="text" name="phone" value="0790 667 596">
+                        </label>
+
+                        <label>
+                            <strong>Location</strong>
+                            <input autocomplete="off" type="text" name="location" value="Constanta">
+                        </label>
+
+                        <label>
+                            <strong>Source</strong>
+                            <input autocomplete="off" type="text" name="tags" value="https://vanjs.org/tutorial">
+                        </label>
+
+                    </form>
+
+                </div>
+
+                <footer>
+                    <button>SAVE CHANGES</button>
+                    <button class="secondary">
+                        CLOSE
+                    </button>
+                </footer>
+            </article>
+
+        </dialog>
+
+    </div>
+
+</body>
+
+</html>

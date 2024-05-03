@@ -1,46 +1,27 @@
 import { Hono } from 'hono'
-import type { FC } from 'hono/jsx'
+import { logger } from 'hono/logger'
+import { cors } from 'hono/cors'
+import textParser from './text_parser'
+
 
 const app = new Hono()
 
-
-const Layout: FC = (props) => {
-  return (
-    <html lang="en">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>sales-assistant</title>
-      </head>
-      <body>
-        {props.children}
-      </body>
-    </html>
-  )
-}
+app.use(logger())
+app.use('*', cors())
 
 
-const Top: FC<{ messages: string[] }> = (props: { messages: string[] }) => {
-  return (
-    <Layout>
-      <h1>Hello Hono!</h1>
-      <ul>
-        {props.messages.map((message) => {
-          return <li>{message}!!</li>
-        })}
-      </ul>
-
-      <div>
-          
-      </div>
-    </Layout>
-  )
-}
-
-
-app.get('/', (c) => {
-  const messages = ['Good Morning', 'Good Evening', 'Good Night']
-  return c.html(<Top messages={messages} />)
+app.post('/parse-text', async (c) => {
+  let data = await c.req.json()
+  let result = textParser(data.text, data.source)
+  return c.json(result)
 })
 
-export default app
+
+
+console.log("\nHono server started...\n")
+Bun.serve({
+  port: 3000,
+  hostname: "127.0.0.1",
+  development: false,
+  fetch: app.fetch
+})

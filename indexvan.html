@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <script src="chrome-extension/van-1.5.0.nomodule.min.js"></script>
+    <title>Modal</title>
+</head>
+
+<body>
+
+    <script>
+
+        const { article, button, dialog, div, footer, form, h3, input, label, p, strong } = van.tags
+
+        function Modal() {
+
+            return div(
+                dialog({ open: "open" },
+                    article(
+                        h3({ style: "text-align: center; font-weight: bold;" },
+                            "Add/Update prospect",
+                        ),
+                        p({ style: "color: grey;" },
+                            "\n                    Fields will be updated automatically.\n                    Please correct inconsistencies if any.\n                ",
+                        ),
+                        div({ style: "margin-top: 2rem;" },
+                            strong({ style: "display: block; margin-bottom: 0.2rem;" },
+                                "Selected",
+                            ),
+                            p({ style: "font-size: 18px;" },
+                                "\n                        CarXpert Constanta 1.5K followers • 0 following Intro SERVICE AUTO VOPSITORIE TINICHIGERIE\n                        DECONTARE\n                        DIRECTĂ CU ASIGURATORII Page · Vehicle repair shop Interioara 3, incinta COMAT., Constanta,\n                        Romania\n                        0790\n                        667 596 autoqualityrepair@gmail.com Open now\n                    ",
+                            ),
+                            form({ style: "margin-top: 2rem;" },
+                                label(
+                                    strong(
+                                        "Status",
+                                    ),
+                                    input({ type: "text", name: "status", value: "" }),
+                                ),
+                                label(
+                                    strong(
+                                        "Tags",
+                                    ),
+                                    input({ type: "text", name: "tags", value: "service auto, no website" }),
+                                ),
+                                label(
+                                    strong(
+                                        "Name",
+                                    ),
+                                    input({ autocomplete: "off", type: "text", name: "name", value: "CarXpert Constanta" }),
+                                ),
+                                label(
+                                    strong(
+                                        "Email",
+                                    ),
+                                    input({ autocomplete: "off", type: "email", name: "email", value: "autoqualityrepair@gmail.com" }),
+                                ),
+                                label(
+                                    strong(
+                                        "Phone",
+                                    ),
+                                    input({ autocomplete: "off", type: "text", name: "phone", value: "0790 667 596" }),
+                                ),
+                                label(
+                                    strong(
+                                        "Location",
+                                    ),
+                                    input({ autocomplete: "off", type: "text", name: "location", value: "Constanta" }),
+                                ),
+                                label(
+                                    strong(
+                                        "Source",
+                                    ),
+                                    input({ autocomplete: "off", type: "text", name: "tags", value: "https://vanjs.org/tutorial" }),
+                                ),
+                            ),
+                        ),
+                        footer(
+                            button(
+                                "SAVE CHANGES",
+                            ),
+                            button({ class: "secondary" },
+                                "CLOSE",
+                            ),
+                        ),
+                    ),
+                ),
+            )
+
+        }
+
+
+        van.add(document.body, Modal())
+
+    </script>
+
+</body>
+
+</html>

@@ -1,7 +1,7 @@
 "use strict"
 
 
-const { article, button, dialog, div, footer, form, h3, input, label, p, strong } = van.tags
+const { article, button, dialog, div, footer, form, h3, input, label, p, strong, datalist, option } = van.tags
 
 
 
@@ -80,48 +80,57 @@ dialog {
                             strong(
                                 "Status",
                             ),
-                            input({ type: "text", spellcheck: "false", name: "status", value: status.val, oninput: e => status.val = e.target.value }),
+                            input({ list: "statuses", type: "text", spellcheck: "false", name: "status", value: status.val, oninput: e => status.val = e.target.value }),
                         ),
-                        label(
-                            strong(
-                                "Tags",
-                            ),
-                            input({ type: "text", spellcheck: "false", name: "tags", value: tags.val, oninput: e => tags.val = e.target.value }),
+                        datalist(
+                            { id: "statuses" },
+                            option({ value: "Prospect" }),
+                            option({ value: "Qualified Prospect" }),
+                            option({ value: "Opportunity" }),
+                            option({ value: "Proposal Presented" }),
+                            option({ value: "Negotiation" }),
+                            option({ value: "Closed" }),
+                            option({ value: "Post-Sale" }),
                         ),
-                        label(
-                            strong(
-                                "Name",
-                            ),
-                            input({ autocomplete: "off", spellcheck: "false", type: "text", name: "name", value: name.val, oninput: e => name.val = e.target.value }),
+
+                        strong(
+                            "Tags",
                         ),
-                        label(
-                            strong(
-                                "Email",
-                            ),
-                            input({ autocomplete: "off", spellcheck: "false", type: "email", name: "email", value: email.val, oninput: e => email.val = e.target.value }),
+                        input({ type: "text", spellcheck: "false", name: "tags", value: tags.val, oninput: e => tags.val = e.target.value }),
+                    ),
+                    label(
+                        strong(
+                            "Name",
                         ),
-                        label(
-                            strong(
-                                "Phone",
-                            ),
-                            input({ autocomplete: "off", spellcheck: "false", type: "text", name: "phone", value: phone.val, oninput: e => phone.val = e.target.value }),
+                        input({ autocomplete: "off", spellcheck: "false", type: "text", name: "name", value: name.val, oninput: e => name.val = e.target.value }),
+                    ),
+                    label(
+                        strong(
+                            "Email",
                         ),
-                        label(
-                            strong(
-                                "Source",
-                            ),
-                            input({ autocomplete: "off", spellcheck: "false", type: "text", name: "tags", value: source.val, oninput: e => source.val = e.target.value }),
+                        input({ autocomplete: "off", spellcheck: "false", type: "email", name: "email", value: email.val, oninput: e => email.val = e.target.value }),
+                    ),
+                    label(
+                        strong(
+                            "Phone",
                         ),
+                        input({ autocomplete: "off", spellcheck: "false", type: "text", name: "phone", value: phone.val, oninput: e => phone.val = e.target.value }),
+                    ),
+                    label(
+                        strong(
+                            "Source",
+                        ),
+                        input({ autocomplete: "off", spellcheck: "false", type: "text", name: "tags", value: source.val, oninput: e => source.val = e.target.value }),
                     ),
                 ),
-                footer(
-                    button(
-                        { onclick: saveData },
-                        "SAVE CHANGES"
-                    ),
-                    button({ class: "secondary", onclick: closeModal },
-                        "CLOSE",
-                    ),
+            ),
+            footer(
+                button(
+                    { onclick: saveData },
+                    "SAVE CHANGES"
+                ),
+                button({ class: "secondary", onclick: closeModal },
+                    "CLOSE",
                 ),
             ),
         ),
@@ -133,7 +142,7 @@ async function parseSelectedText(data) {
 
     try {
 
-        let response = await fetch("http://localhost:3000/parse-text", {
+        let response = await fetch("http://localhost:4520/parse-text", {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
@@ -152,7 +161,7 @@ async function parseSelectedText(data) {
         console.error(error)
     }
 
-    alert("Check if server is running on port 3000!")
+    alert("Check if server is running on port 4520!")
 
 }
 

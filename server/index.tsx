@@ -21,7 +21,7 @@ app.post('/parse-text', async (c) => {
 
 console.log("\nHono server started...\n")
 Bun.serve({
-  port: 3000,
+  port: 4520,
   hostname: "127.0.0.1",
   development: false,
   fetch: app.fetch

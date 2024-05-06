@@ -25,8 +25,7 @@
                 "https://*/*"
             ],
             "js": [
-                "van-1.5.0.nomodule.min.js",
-                "content-script.js"
+                "src/content-script.ts"
             ]
         }
     ]

@@ -13,6 +13,7 @@ app.use('*', cors())
 app.post('/parse-text', async (c) => {
   let data = await c.req.json()
   let result = textParser(data.text, data.source)
+  console.log(result, " was sent")
   return c.json(result)
 })
 

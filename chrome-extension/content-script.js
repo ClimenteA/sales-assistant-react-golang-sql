@@ -44,7 +44,7 @@ dialog {
     function saveData() {
 
         const data = {
-            text: text.val,
+            text: text.selectedtext,
             status: status.val,
             tags: tags.val,
             name: name.val,
@@ -72,7 +72,7 @@ dialog {
                         "Selected",
                     ),
                     p({ style: "font-size: 18px;" },
-                        text.text,
+                        text.selectedtext,
                     ),
                     form({ style: "margin-top: 2rem;" },
                         label(
@@ -128,6 +128,29 @@ dialog {
 }
 
 
+async function parseSelectedText(data) {
+
+    let response = await fetch("http://localhost:3000/parse-text", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+            "Accept": "*/*",
+            "User-Agent": "Thunder Client (https://www.thunderclient.com)",
+            "Content-Type": "application/json"
+        }
+    })
+
+    console.log("response.ok: ", response.ok)
+
+    if (response.ok) {
+        let parsed = await response.json()
+        return parsed
+    }
+
+}
+
+
+
 document.addEventListener('contextmenu', async function (event) {
     event.preventDefault()
     const selectedText = window.getSelection().toString()
@@ -138,14 +161,11 @@ document.addEventListener('contextmenu', async function (event) {
 
     const data = {
         text: selectedText,
-        source: document.location.host
+        source: document.location.href
     }
 
-    chrome.storage.sync.set({ 'selected': data })
-
-    chrome.runtime.sendMessage('parseSelected', (response) => {
-        van.add(document.body, ModalForm(response))
-    })
+    let parsedSelected = await parseSelectedText(data)
+    van.add(document.body, ModalForm(parsedSelected))
 
 })
 

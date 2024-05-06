@@ -89,7 +89,8 @@ const parseMapper: { [key: string]: ParseFunction } = {
 
 
 export default function textParser(text: string, source: string) {
-    const parser = parseMapper[source]
+    const host = source.split("//")[1].split("/")[0]
+    const parser = parseMapper[host]
     if (!parser) return defaultParser(text, source)
     return parser(text, source)
 }

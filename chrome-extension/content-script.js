@@ -161,10 +161,7 @@ async function parseSelectedText(data) {
 document.addEventListener('contextmenu', async function (event) {
 
     const selectedText = window.getSelection().toString()
-    if (!selectedText) {
-        alert("No text selected!")
-        return
-    }
+    if (!selectedText) return
 
     let modalVisible = document.getElementById("sp-modal") ? true : false
 

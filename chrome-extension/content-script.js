@@ -39,6 +39,7 @@ dialog {
         document.head.removeChild(styleElem)
         modalIsOpen.val = ""
         document.body.style.overflow = ""
+        document.getElementById("sp-modal").remove()
     }
 
     function saveData() {
@@ -130,42 +131,61 @@ dialog {
 
 async function parseSelectedText(data) {
 
-    let response = await fetch("http://localhost:3000/parse-text", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-            "Accept": "*/*",
-            "User-Agent": "Thunder Client (https://www.thunderclient.com)",
-            "Content-Type": "application/json"
+    try {
+
+        let response = await fetch("http://localhost:3000/parse-text", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+                "Accept": "*/*",
+                "User-Agent": "Thunder Client (https://www.thunderclient.com)",
+                "Content-Type": "application/json"
+            }
+        })
+
+        if (response.ok) {
+            let parsed = await response.json()
+            return parsed
         }
-    })
 
-    console.log("response.ok: ", response.ok)
-
-    if (response.ok) {
-        let parsed = await response.json()
-        return parsed
+    } catch (error) {
+        console.error(error)
     }
+
+    alert("Check if server is running on port 3000!")
 
 }
 
 
 
 document.addEventListener('contextmenu', async function (event) {
-    event.preventDefault()
+
     const selectedText = window.getSelection().toString()
     if (!selectedText) {
         alert("No text selected!")
         return
     }
 
-    const data = {
-        text: selectedText,
-        source: document.location.href
-    }
+    let modalVisible = document.getElementById("sp-modal") ? true : false
 
-    let parsedSelected = await parseSelectedText(data)
-    van.add(document.body, ModalForm(parsedSelected))
+    if (modalVisible === false) {
+
+        event.preventDefault()
+
+        const data = {
+            text: selectedText,
+            source: document.location.href
+        }
+
+        let parsedSelected = await parseSelectedText(data)
+
+        console.log(parsedSelected)
+
+        if (parsedSelected) {
+            van.add(document.body, ModalForm(parsedSelected))
+        }
+
+    }
 
 })
 

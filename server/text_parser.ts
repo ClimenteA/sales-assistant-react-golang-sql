@@ -5,10 +5,10 @@ import extractor from "phonenumbers-extractor"
 type ParsedText = {
     selectedtext: string
     status: string
-    tags: string
     name: string
     email: string
     phone: string
+    mentions: string
     source: string
 }
 
@@ -46,6 +46,7 @@ function extractPhoneFromText(text: string) {
 function parseFacebookText(text: string, source: string): ParsedText {
 
     const status = "new"
+    const mentions = ""
 
     let name = text.split("likes")[0].trim()
     if (name == text.trim()) {
@@ -58,10 +59,10 @@ function parseFacebookText(text: string, source: string): ParsedText {
     return {
         selectedtext: text,
         status: status,
-        tags: "",
         name: name || "",
         email: email || "",
         phone: phone || "",
+        mentions: mentions || "",
         source: source
     }
 }
@@ -70,14 +71,15 @@ function parseFacebookText(text: string, source: string): ParsedText {
 function defaultParser(text: string, source: string): ParsedText {
 
     const status = "new"
+    const mentions = ""
 
     return {
         selectedtext: text,
         status: status,
-        tags: "",
         name: "",
         email: extractEmailFromText(text) || "",
         phone: extractPhoneFromText(text) || "",
+        mentions: mentions || "",
         source: source
     }
 }

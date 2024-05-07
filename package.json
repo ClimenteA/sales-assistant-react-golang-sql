@@ -1,6 +1,9 @@
 {
   "scripts": {
-    "dev": "bun run --hot server/index.tsx"
+    "dev": "bun run --hot server/index.tsx",
+    "db:migrations": "drizzle-kit generate:sqlite --out ./server/migrations --schema ./server/db_tables.ts",
+    "drop:migrations": "rm -rf ./server/migrations",
+    "db:ui": "drizzle-kit studio --port 4590"
   },
   "dependencies": {
     "drizzle-orm": "^0.30.9",

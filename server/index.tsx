@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { logger } from 'hono/logger'
 import { cors } from 'hono/cors'
 import textParser from './text_parser'
+import { findContactBySource, saveContact } from './db_operations'
 
 
 const app = new Hono()
@@ -13,11 +14,15 @@ app.use('*', cors())
 app.post('/parse-text', async (c) => {
   let data = await c.req.json()
   let result = textParser(data.text, data.source)
-  console.log(data, " was recevied")
-  console.log(result, " was sent")
   return c.json(result)
 })
 
+
+app.post('/save-contact', async (c) => {
+  let data = await c.req.json()
+  let result = await saveContact(data)
+  return c.json(result)
+})
 
 
 console.log("\nHono server started...\n")

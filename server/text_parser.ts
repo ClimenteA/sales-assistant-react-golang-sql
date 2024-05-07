@@ -1,16 +1,6 @@
 import extractEmail from "extract-email-address"
 import extractor from "phonenumbers-extractor"
-
-
-type ParsedText = {
-    selectedtext: string
-    status: string
-    name: string
-    email: string
-    phone: string
-    mentions: string
-    source: string
-}
+import { ParsedText } from "./dto"
 
 
 type ExtractedEmail = {

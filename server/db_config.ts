@@ -10,4 +10,10 @@ const sqlite = new Database("./data/database.db")
 
 export const db = drizzle(sqlite, { schema: { ...tables } })
 
-migrate(db, { migrationsFolder: "./server/migrations" })
+try {
+    console.info("Migrating tables...")
+    migrate(db, { migrationsFolder: "./server/migrations" })
+    console.info("Migrations were successfull!")
+} catch (error) {
+    console.warn("Failed to make migrations. Make sure you've run npm run db:migrations first.")
+}

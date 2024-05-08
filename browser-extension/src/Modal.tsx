@@ -9,29 +9,29 @@ const headers = {
 }
 
 type RawData = {
-    text: string
-    source: string
+    raw_text: string
+    url: string
+    safe_url: string
 }
 
 type ParsedText = {
-    selectedtext: string
+    raw_text: string
     status: string
     name: string
     email: string
     phone: string
     mentions: string
-    source: string
+    url: string
+    safe_url: string
 }
 
 
-async function getSourceInfo(source: string) {
+async function getSafeUrlInfo() {
 
     try {
 
-        let response = await fetch(`http://localhost:${PORT}/source-info/${encodeURIComponent(source)}`, {
-            method: "GET",
-            headers: headers
-        })
+        let url = `http://localhost:${PORT}/source-info/${encodeURIComponent(document.location.href)}`
+        let response = await fetch(url, { method: "GET", headers: headers })
 
         if (response.ok) {
             let parsed: ParsedText = await response.json()
@@ -47,7 +47,7 @@ async function getSourceInfo(source: string) {
 }
 
 
-async function parseSelectedText(data: RawData) {
+async function parseRawRext(data: RawData) {
 
     try {
 
@@ -81,10 +81,8 @@ async function saveContact(data: ParsedText) {
             headers: headers
         })
 
-        if (response.ok) {
-            let parsed = await response.json()
-            return parsed
-        }
+        let parsed = await response.json()
+        return parsed
 
     } catch (error) {
         console.error(error)
@@ -98,18 +96,21 @@ async function saveContact(data: ParsedText) {
 export default function Modal() {
 
     let [modalOn, setModalState] = useState(false)
-    let [selectedText, setSelectedText] = useState("")
+    let [raw_text, setRawText] = useState("")
     let [status, setStatus] = useState("")
     let [name, setName] = useState("")
     let [email, setEmail] = useState("")
     let [phone, setPhone] = useState("")
     let [mentions, setMentions] = useState("")
+    let [saveButtonText, setSaveButtonText] = useState("SAVE CHANGES")
+    let [saving, setSaving] = useState(false)
+    let [savingTextInfo, setSavingTextInfo] = useState("")
 
     useEffect(() => {
 
         if (window.getSelection()?.toString()) {
 
-            getSourceInfo(document.location.href)
+            getSafeUrlInfo()
                 .then(res => {
                     if (res) {
                         setStatus(res.status)
@@ -119,20 +120,16 @@ export default function Modal() {
                         setMentions(res.mentions)
                     }
                 })
-                .catch(error => {
-                    console.log("Can't get existing data for this source. Make sure server is running!")
-                })
-
         }
 
         async function rightClickModalHandler(event: MouseEvent) {
 
             if (modalOn) return
 
-            const rawSelectedText = window.getSelection()?.toString()
-            if (!rawSelectedText) return
+            const raw_text = window.getSelection()?.toString()
+            if (!raw_text) return
 
-            setSelectedText(rawSelectedText)
+            setRawText(raw_text)
 
             event.preventDefault()
 
@@ -155,9 +152,10 @@ dialog {
             document.head.appendChild(styleElem)
 
 
-            let parsedSelected = await parseSelectedText({
-                text: rawSelectedText,
-                source: document.location.href
+            let parsedSelected = await parseRawRext({
+                raw_text: raw_text,
+                url: document.location.href,
+                safe_url: encodeURIComponent(document.location.href),
             })
 
             console.log("parsed:", parsedSelected)
@@ -183,24 +181,40 @@ dialog {
         document.getElementById("contact-info-custom-style")?.remove()
         document.getElementById("contact-info-custom-css-library")?.remove()
         setModalState(false)
+        setSaving(false)
+        setSaveButtonText("SAVE CHANGES")
+        setSavingTextInfo("")
     }
-
 
     async function handleSubmit(event: any) {
         event.preventDefault()
 
+        setSaving(true)
+        setSaveButtonText("SAVING...")
+        setSavingTextInfo("Saving data..")
+
         let payload: ParsedText = {
-            selectedtext: selectedText,
+            raw_text: raw_text,
             status: status.toLowerCase(),
             name: name,
             email: email.toLowerCase(),
             phone: phone,
             mentions: mentions,
-            source: document.location.href
+            url: document.location.href,
+            safe_url: encodeURIComponent(document.location.href)
         }
 
-        await saveContact(payload)
+        let response = await saveContact(payload)
 
+        setSaving(false)
+        setSaveButtonText("SAVE CHANGES")
+
+        if (response.message == "success") {
+            setSavingTextInfo("Data saved! You can close this modal now.")
+        } else {
+            setSavingTextInfo("Failed to save data! Check if you have the server running.")
+            setTimeout(() => setSavingTextInfo(""), 5000)
+        }
     }
 
     function handleNameChange(value: string) {
@@ -247,7 +261,7 @@ dialog {
                 </strong>
 
                 <p style={{ fontSize: "18px", color: "brown" }}>
-                    {selectedText}
+                    {raw_text}
                 </p>
 
                 <form onSubmit={handleSubmit} style={{ marginTop: "2rem" }}>
@@ -283,12 +297,12 @@ dialog {
                     </label>
 
                     <footer style={{ display: "flex", gap: "2rem", marginTop: "2rem" }}>
-                        <button type='submit'>SAVE CHANGES</button>
+                        <button type='submit' disabled={saving}>{saveButtonText}</button>
                         <button type='button' className="secondary" onClick={closeModal}>
                             CLOSE
                         </button>
                     </footer>
-
+                    <small style={{ marginTop: "-10px", color: "grey" }}>{savingTextInfo}</small>
                 </form>
 
             </article>

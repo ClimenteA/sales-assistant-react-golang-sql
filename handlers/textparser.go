@@ -38,14 +38,44 @@ func findPhoneNumbers(rawtext string) []string {
 	return possiblePhoneNumbers
 }
 
+func findNameForFacebook(rawText string) string {
+	return strings.Split(rawText, "\n")[0]
+}
+
+func findName(contact ContactInfo) string {
+
+	if strings.Contains(contact.Url, "facebook.com") {
+		return findNameForFacebook(contact.RawText)
+	}
+
+	return ""
+
+}
+
 func TextParser(contact ContactInfo) ContactInfo {
-	emails := findEmails(contact.RawText)
-	phones := findPhoneNumbers(contact.RawText)
+	emails := strings.Join(findEmails(contact.RawText), ", ")
+	phones := strings.Join(findPhoneNumbers(contact.RawText), ", ")
+	name := findName(contact)
+
+	existingContact, err := FindContactByUrl(contact.SafeUrl)
+	if err == nil {
+
+		parsedContact := ContactInfo{
+			RawText:  contact.RawText,
+			Name:     name,
+			Email:    emails,
+			Phone:    phones,
+			Status:   existingContact.Status,
+			Mentions: existingContact.Mentions,
+		}
+		return parsedContact
+	}
 
 	parsedContact := ContactInfo{
 		RawText: contact.RawText,
-		Email:   strings.Join(emails, ", "),
-		Phone:   strings.Join(phones, ", "),
+		Name:    name,
+		Email:   emails,
+		Phone:   phones,
 	}
 
 	return parsedContact

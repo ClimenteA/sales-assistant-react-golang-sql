@@ -1,23 +1,60 @@
 import { useEffect, useState } from 'react'
 
+const PORT = 4520
+
+
+const headers = {
+    "Accept": "*/*",
+    "Content-Type": "application/json"
+}
 
 type RawData = {
     text: string
     source: string
 }
 
+type ParsedText = {
+    selectedtext: string
+    status: string
+    name: string
+    email: string
+    phone: string
+    mentions: string
+    source: string
+}
+
+
+async function getSourceInfo(source: string) {
+
+    try {
+
+        let response = await fetch(`http://localhost:${PORT}/source-info/${encodeURIComponent(source)}`, {
+            method: "GET",
+            headers: headers
+        })
+
+        if (response.ok) {
+            let parsed: ParsedText = await response.json()
+            return parsed
+        }
+
+    } catch (error) {
+        console.error(error)
+    }
+
+    alert(`Check if server is running on port ${PORT}!`)
+
+}
+
+
 async function parseSelectedText(data: RawData) {
 
     try {
 
-        let response = await fetch("http://localhost:4520/parse-text", {
+        let response = await fetch(`http://localhost:${PORT}/parse-text`, {
             method: "POST",
             body: JSON.stringify(data),
-            headers: {
-                "Accept": "*/*",
-                "User-Agent": "Thunder Client (https://www.thunderclient.com)",
-                "Content-Type": "application/json"
-            }
+            headers: headers
         })
 
         if (response.ok) {
@@ -29,7 +66,31 @@ async function parseSelectedText(data: RawData) {
         console.error(error)
     }
 
-    alert("Check if server is running on port 4520!")
+    alert(`Check if server is running on port ${PORT}!`)
+
+}
+
+
+async function saveContact(data: ParsedText) {
+
+    try {
+
+        let response = await fetch(`http://localhost:${PORT}/save-contact`, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: headers
+        })
+
+        if (response.ok) {
+            let parsed = await response.json()
+            return parsed
+        }
+
+    } catch (error) {
+        console.error(error)
+    }
+
+    alert(`Check if server is running on port ${PORT}!`)
 
 }
 
@@ -45,6 +106,24 @@ export default function Modal() {
     let [mentions, setMentions] = useState("")
 
     useEffect(() => {
+
+        if (window.getSelection()?.toString()) {
+
+            getSourceInfo(document.location.href)
+                .then(res => {
+                    if (res) {
+                        setStatus(res.status)
+                        setName(res.name)
+                        setEmail(res.email)
+                        setPhone(res.phone)
+                        setMentions(res.mentions)
+                    }
+                })
+                .catch(error => {
+                    console.log("Can't get existing data for this source. Make sure server is running!")
+                })
+
+        }
 
         async function rightClickModalHandler(event: MouseEvent) {
 
@@ -110,7 +189,8 @@ dialog {
     async function handleSubmit(event: any) {
         event.preventDefault()
 
-        let payload = {
+        let payload: ParsedText = {
+            selectedtext: selectedText,
             status: status.toLowerCase(),
             name: name,
             email: email.toLowerCase(),
@@ -119,7 +199,7 @@ dialog {
             source: document.location.href
         }
 
-        console.log("TODO save payload", payload)
+        await saveContact(payload)
 
     }
 

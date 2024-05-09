@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"regexp"
 	"strings"
 
@@ -38,14 +39,10 @@ func findPhoneNumbers(rawtext string) []string {
 	return possiblePhoneNumbers
 }
 
-func findNameForFacebook(rawText string) string {
-	return strings.Split(rawText, "\n")[0]
-}
-
 func findName(contact ContactInfo) string {
 
-	if strings.Contains(contact.Url, "facebook.com") {
-		return findNameForFacebook(contact.RawText)
+	if strings.Contains(contact.Url, "facebook.com") || strings.Contains(contact.Url, "linkedin.com") {
+		return strings.Split(contact.RawText, "\n")[0]
 	}
 
 	return ""
@@ -53,6 +50,9 @@ func findName(contact ContactInfo) string {
 }
 
 func TextParser(contact ContactInfo) ContactInfo {
+
+	log.Println(contact.RawText)
+
 	emails := strings.Join(findEmails(contact.RawText), ", ")
 	phones := strings.Join(findPhoneNumbers(contact.RawText), ", ")
 	name := findName(contact)

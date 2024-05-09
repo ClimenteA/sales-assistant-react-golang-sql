@@ -191,8 +191,6 @@ export default function Modal() {
     }, [modalOn, raw_text, status, name, email, phone, mentions, saveButtonText, saving, savingTextInfo])
 
     function closeModal() {
-        document.getElementById("contact-info-custom-style")?.remove()
-        document.getElementById("contact-info-custom-css-library")?.remove()
 
         chrome.storage.local.get(['initialHeadInnerHTML'], function (items) {
             document.head.innerHTML = items.initialHeadInnerHTML

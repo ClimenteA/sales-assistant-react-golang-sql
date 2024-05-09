@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"log"
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -16,7 +16,7 @@ func findEmails(rawtext string) []string {
 
 	emails := []string{}
 	for _, e := range foundEmails {
-		emails = append(emails, e.String())
+		emails = append(emails, strings.ToLower(strings.TrimSpace(e.String())))
 	}
 
 	return emails
@@ -32,7 +32,7 @@ func findPhoneNumbers(rawtext string) []string {
 	possiblePhoneNumbers := []string{}
 	for _, num := range allNumbers {
 		if len(num) >= 8 {
-			possiblePhoneNumbers = append(possiblePhoneNumbers, num)
+			possiblePhoneNumbers = append(possiblePhoneNumbers, strings.TrimSpace(num))
 		}
 	}
 
@@ -42,7 +42,7 @@ func findPhoneNumbers(rawtext string) []string {
 func findName(contact ContactInfo) string {
 
 	if strings.Contains(contact.Url, "facebook.com") || strings.Contains(contact.Url, "linkedin.com") {
-		return strings.Split(contact.RawText, "\n")[0]
+		return strings.TrimSpace(strings.Split(contact.RawText, "\n")[0])
 	}
 
 	return ""
@@ -51,14 +51,20 @@ func findName(contact ContactInfo) string {
 
 func TextParser(contact ContactInfo) ContactInfo {
 
-	log.Println(contact.RawText)
+	fmt.Println("TEXT:", contact.RawText)
 
 	emails := strings.Join(findEmails(contact.RawText), ", ")
 	phones := strings.Join(findPhoneNumbers(contact.RawText), ", ")
 	name := findName(contact)
 
-	existingContact, err := FindContactByUrl(contact.SafeUrl)
+	existingContact, err := FindContactByUrl(contact.Url)
 	if err == nil {
+
+		fmt.Println("Existing contact")
+
+		if strings.Contains(emails, name) && existingContact.Email == "" {
+			name = existingContact.Name
+		}
 
 		parsedContact := ContactInfo{
 			RawText:  contact.RawText,
@@ -70,6 +76,8 @@ func TextParser(contact ContactInfo) ContactInfo {
 		}
 		return parsedContact
 	}
+
+	fmt.Println("New contact")
 
 	parsedContact := ContactInfo{
 		RawText: contact.RawText,

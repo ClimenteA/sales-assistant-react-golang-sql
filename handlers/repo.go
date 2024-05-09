@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"strings"
+
 	repo "github.com/ClimenteA/gobadrepo"
 	"github.com/gofiber/fiber/v2/log"
 	"github.com/jmoiron/sqlx"
@@ -18,9 +20,14 @@ func init() {
 	}
 }
 
-func FindContactByUrl(safeurl string) (ContactInfo, error) {
+func FindContactByUrl(url string) (ContactInfo, error) {
+
+	if strings.HasSuffix(url, "/overlay/contact-info/") && strings.Contains(url, "linkedin.com") {
+		url = strings.Replace(url, "/overlay/contact-info/", "/", 1)
+	}
+
 	var contact ContactInfo
-	err := repo.FindOne(DB, ContactInfo{SafeUrl: safeurl}, &contact)
+	err := repo.FindOne(DB, ContactInfo{Url: url}, &contact)
 	if err != nil {
 		return contact, err
 	}
@@ -29,7 +36,7 @@ func FindContactByUrl(safeurl string) (ContactInfo, error) {
 
 func SaveContact(contact ContactInfo) error {
 
-	existingContact, err := FindContactByUrl(contact.SafeUrl)
+	existingContact, err := FindContactByUrl(contact.Url)
 
 	if err != nil {
 		log.Info("New contact:", contact)
@@ -37,19 +44,43 @@ func SaveContact(contact ContactInfo) error {
 		return err
 	}
 
-	concatContact := ContactInfo{
-		RawText:  existingContact.RawText + "\n" + contact.RawText,
-		Name:     contact.Name,
-		Status:   contact.Status,
-		Email:    contact.Email,
-		Phone:    contact.Phone,
-		Mentions: contact.Mentions,
-		Url:      contact.Url,
-		SafeUrl:  contact.SafeUrl,
+	name := contact.Name
+	if name == "" {
+		name = existingContact.Name
 	}
 
-	log.Info("Updated contact:", concatContact)
-	err = repo.UpdateMany(DB, ContactInfo{SafeUrl: contact.SafeUrl}, concatContact)
+	status := contact.Status
+	if status == "" {
+		status = existingContact.Status
+	}
+
+	email := contact.Email
+	if email == "" {
+		email = existingContact.Email
+	}
+
+	phone := contact.Phone
+	if phone == "" {
+		phone = existingContact.Phone
+	}
+
+	mentions := contact.Mentions
+	if mentions == "" {
+		mentions = existingContact.Mentions
+	}
+
+	concatContact := ContactInfo{
+		RawText:  existingContact.RawText + "\n" + contact.RawText,
+		Name:     name,
+		Status:   status,
+		Email:    email,
+		Phone:    phone,
+		Mentions: mentions,
+		Url:      existingContact.Url,
+	}
+
+	log.Infof("\nUpdated contact: %+v", concatContact)
+	err = repo.UpdateMany(DB, ContactInfo{Url: contact.Url}, concatContact)
 	if err != nil {
 		return err
 	}

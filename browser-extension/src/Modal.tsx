@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, FormEvent } from 'react'
 
 const PORT = 4520
 
@@ -11,7 +11,6 @@ const headers = {
 type RawData = {
     raw_text: string
     url: string
-    safe_url: string
 }
 
 type ParsedText = {
@@ -22,31 +21,6 @@ type ParsedText = {
     phone: string
     mentions: string
     url: string
-    safe_url: string
-}
-
-
-async function getSafeUrlInfo() {
-
-    try {
-
-        let url = `http://localhost:${PORT}/source-info/${encodeURIComponent(document.location.href)}`
-        let response = await fetch(url, { method: "GET", headers: headers })
-
-        if (response.status == 200) {
-            let parsed: ParsedText = await response.json()
-            return parsed
-        } else {
-            return null
-        }
-
-    } catch (error) {
-        console.error(error)
-    }
-
-    alert(`Check if server is running on port ${PORT}!`)
-    return null
-
 }
 
 
@@ -96,7 +70,6 @@ async function saveContact(data: ParsedText) {
 }
 
 
-
 function addModalStyles() {
 
     chrome.storage.local.set({ 'initialHeadInnerHTML': document.head.innerHTML })
@@ -131,54 +104,37 @@ export default function Modal() {
     let [email, setEmail] = useState("")
     let [phone, setPhone] = useState("")
     let [mentions, setMentions] = useState("")
-    let [saveButtonText, setSaveButtonText] = useState("SAVE CHANGES")
     let [saving, setSaving] = useState(false)
     let [savingTextInfo, setSavingTextInfo] = useState("")
 
     useEffect(() => {
 
-        if (window.getSelection()?.toString()) {
-
-            getSafeUrlInfo()
-                .then(res => {
-                    if (res != null) {
-                        setStatus(res.status)
-                        setName(res.name)
-                        setEmail(res.email)
-                        setPhone(res.phone)
-                        setMentions(res.mentions)
-                    }
-                })
-        }
-
-        async function rightClickModalHandler(event: MouseEvent) {
+        function rightClickModalHandler(event: MouseEvent) {
 
             if (modalOn) return
-
             const raw_text = window.getSelection()?.toString()
             if (!raw_text) return
 
-            setRawText(raw_text)
-
             event.preventDefault()
 
-            let parsedSelected = await parseRawRext({
+            parseRawRext({
                 raw_text: raw_text,
                 url: document.location.href,
-                safe_url: encodeURIComponent(document.location.href),
+            }).then(parsedSelected => {
+
+                console.log("parsed:", parsedSelected)
+
+                if (parsedSelected) {
+                    addModalStyles()
+                    setRawText(raw_text)
+                    setName(parsedSelected.name)
+                    setEmail(parsedSelected.email)
+                    setPhone(parsedSelected.phone)
+                    setStatus(parsedSelected.status)
+                    setMentions(parsedSelected.mentions)
+                    setModalState(true)
+                }
             })
-
-            console.log("parsed:", parsedSelected)
-
-            if (parsedSelected) {
-                addModalStyles()
-                setModalState(true)
-                setStatus(parsedSelected.status)
-                setName(parsedSelected.name)
-                setEmail(parsedSelected.email)
-                setPhone(parsedSelected.phone)
-                setMentions(parsedSelected.mentions)
-            }
 
         }
 
@@ -188,7 +144,7 @@ export default function Modal() {
             document.removeEventListener('contextmenu', rightClickModalHandler)
         }
 
-    }, [modalOn, raw_text, status, name, email, phone, mentions, saveButtonText, saving, savingTextInfo])
+    }, [])
 
     function closeModal() {
 
@@ -198,15 +154,13 @@ export default function Modal() {
 
         setModalState(false)
         setSaving(false)
-        setSaveButtonText("SAVE CHANGES")
         setSavingTextInfo("")
     }
 
-    async function handleSubmit(event: any) {
+    function handleSubmit(event: FormEvent) {
         event.preventDefault()
 
         setSaving(true)
-        setSaveButtonText("SAVING...")
         setSavingTextInfo("Saving data..")
 
         let payload: ParsedText = {
@@ -217,47 +171,21 @@ export default function Modal() {
             phone: phone,
             mentions: mentions,
             url: document.location.href,
-            safe_url: encodeURIComponent(document.location.href)
         }
 
-        let response = await saveContact(payload)
+        saveContact(payload).then(response => {
 
-        setSaving(false)
-        setSaveButtonText("SAVE CHANGES")
+            setSaving(false)
 
-        if (response.message == "success") {
-            setSavingTextInfo("Data saved! You can close this modal now.")
-        } else {
-            setSavingTextInfo("Failed to save data! Check if you have the server running.")
-            setTimeout(() => setSavingTextInfo(""), 5000)
-        }
+            if (response.message == "success") {
+                setSavingTextInfo("Data saved! You can close this modal now.")
+            } else {
+                setSavingTextInfo("Failed to save data! Check if you have the server running.")
+                setTimeout(() => setSavingTextInfo(""), 5000)
+            }
+        })
+
     }
-
-    function handleNameChange(value: string) {
-        console.log(value)
-        setName(value)
-    }
-
-    function handleEmailChange(value: string) {
-        console.log(value)
-        setEmail(value)
-    }
-
-    function handlePhoneChange(value: string) {
-        console.log(value)
-        setPhone(value)
-    }
-
-    function handleStatusChange(value: string) {
-        console.log(value)
-        setStatus(value)
-    }
-
-    function handleMentionsChange(value: string) {
-        console.log(value)
-        setMentions(value)
-    }
-
 
     return (
 
@@ -284,36 +212,36 @@ export default function Modal() {
 
                     <label>
                         <strong>Name</strong>
-                        <input type="text" name="name" value={name} onChange={e => handleNameChange(e.target.value)} />
+                        <input type="text" name="name" value={name} onChange={e => setName(e.target.value)} />
                     </label>
 
                     <div className='grid'>
 
                         <label>
                             <strong>Email</strong>
-                            <input type="email" name="email" value={email} onChange={e => handleEmailChange(e.target.value)} />
+                            <input type="email" name="email" value={email} onChange={e => setEmail(e.target.value)} />
                         </label>
 
                         <label>
                             <strong>Phone</strong>
-                            <input type="text" name="phone" value={phone} onChange={e => handlePhoneChange(e.target.value)} />
+                            <input type="text" name="phone" value={phone} onChange={e => setPhone(e.target.value)} />
                         </label>
 
                     </div>
 
                     <label>
                         <strong>Status</strong>
-                        <input type="text" name="status" value={status} onChange={e => handleStatusChange(e.target.value)} />
+                        <input type="text" name="status" value={status} onChange={e => setStatus(e.target.value)} />
                     </label>
 
 
                     <label>
                         <strong>Mentions</strong>
-                        <textarea name="mentions" value={mentions} onChange={e => handleMentionsChange(e.target.value)}></textarea>
+                        <textarea name="mentions" value={mentions} onChange={e => setMentions(e.target.value)}></textarea>
                     </label>
 
                     <footer style={{ display: "flex", gap: "2rem", marginTop: "2rem" }}>
-                        <button type='submit' disabled={saving}>{saveButtonText}</button>
+                        <button type='submit' disabled={saving}>SAVE CHANGES</button>
                         <button type='button' className="secondary" onClick={closeModal}>
                             CLOSE
                         </button>

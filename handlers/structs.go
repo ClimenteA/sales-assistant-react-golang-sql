@@ -9,5 +9,4 @@ type ContactInfo struct {
 	Phone    string `json:"phone" db:"phone"`
 	Mentions string `json:"mentions" db:"mentions"`
 	Url      string `json:"url" db:"url"`
-	SafeUrl  string `json:"safe_url" db:"safe_url"`
 }

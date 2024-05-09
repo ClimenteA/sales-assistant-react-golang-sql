@@ -24,16 +24,6 @@ func main() {
 	app.Use(logger.New())
 	app.Use(recover.New())
 
-	app.Get("/source-info/:safeurl", func(c *fiber.Ctx) error {
-		safeurl := c.Params("safeurl")
-		result, err := handlers.FindContactByUrl(safeurl)
-		if err != nil {
-			c.Status(404)
-			return c.JSON(fiber.Map{"message": "url not in database"})
-		}
-		return c.JSON(result)
-	})
-
 	app.Post("/parse-text", func(c *fiber.Ctx) error {
 		var err error
 		contact := new(handlers.ContactInfo)

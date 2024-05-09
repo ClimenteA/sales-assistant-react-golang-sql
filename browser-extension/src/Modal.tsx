@@ -33,9 +33,11 @@ async function getSafeUrlInfo() {
         let url = `http://localhost:${PORT}/source-info/${encodeURIComponent(document.location.href)}`
         let response = await fetch(url, { method: "GET", headers: headers })
 
-        if (response.ok) {
+        if (response.status == 200) {
             let parsed: ParsedText = await response.json()
             return parsed
+        } else {
+            return null
         }
 
     } catch (error) {
@@ -43,6 +45,7 @@ async function getSafeUrlInfo() {
     }
 
     alert(`Check if server is running on port ${PORT}!`)
+    return null
 
 }
 
@@ -93,6 +96,32 @@ async function saveContact(data: ParsedText) {
 }
 
 
+
+function addModalStyles() {
+
+    chrome.storage.local.set({ 'initialHeadInnerHTML': document.head.innerHTML })
+    document.head.innerHTML = "<title>Temporary new styles</title>"
+
+    const styleElem = document.createElement("style")
+    styleElem.setAttribute("id", "contact-info-custom-style")
+    styleElem.innerHTML = `
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+dialog {
+font-size: 16px;
+font-family: "Poppins", 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+`
+    const linkElem = document.createElement("link")
+    linkElem.setAttribute("id", "contact-info-custom-css-library")
+    linkElem.setAttribute("rel", "stylesheet")
+    linkElem.setAttribute("href", "https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css")
+
+    document.head.appendChild(linkElem)
+    document.head.appendChild(styleElem)
+}
+
+
 export default function Modal() {
 
     let [modalOn, setModalState] = useState(false)
@@ -112,7 +141,7 @@ export default function Modal() {
 
             getSafeUrlInfo()
                 .then(res => {
-                    if (res) {
+                    if (res != null) {
                         setStatus(res.status)
                         setName(res.name)
                         setEmail(res.email)
@@ -133,25 +162,6 @@ export default function Modal() {
 
             event.preventDefault()
 
-            const styleElem = document.createElement("style")
-            styleElem.setAttribute("id", "contact-info-custom-style")
-            styleElem.innerHTML = `
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-
-dialog {
-    font-size: 16px;
-    font-family: "Poppins", 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-`
-            const linkElem = document.createElement("link")
-            linkElem.setAttribute("id", "contact-info-custom-css-library")
-            linkElem.setAttribute("rel", "stylesheet")
-            linkElem.setAttribute("href", "https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css")
-
-            document.head.appendChild(linkElem)
-            document.head.appendChild(styleElem)
-
-
             let parsedSelected = await parseRawRext({
                 raw_text: raw_text,
                 url: document.location.href,
@@ -160,12 +170,15 @@ dialog {
 
             console.log("parsed:", parsedSelected)
 
-            setModalState(true)
-            setStatus(parsedSelected.status)
-            setName(parsedSelected.name)
-            setEmail(parsedSelected.email)
-            setPhone(parsedSelected.phone)
-            setMentions(parsedSelected.mentions)
+            if (parsedSelected) {
+                addModalStyles()
+                setModalState(true)
+                setStatus(parsedSelected.status)
+                setName(parsedSelected.name)
+                setEmail(parsedSelected.email)
+                setPhone(parsedSelected.phone)
+                setMentions(parsedSelected.mentions)
+            }
 
         }
 
@@ -175,11 +188,16 @@ dialog {
             document.removeEventListener('contextmenu', rightClickModalHandler)
         }
 
-    }, [])
+    }, [modalOn, raw_text, status, name, email, phone, mentions, saveButtonText, saving, savingTextInfo])
 
     function closeModal() {
         document.getElementById("contact-info-custom-style")?.remove()
         document.getElementById("contact-info-custom-css-library")?.remove()
+
+        chrome.storage.local.get(['initialHeadInnerHTML'], function (items) {
+            document.head.innerHTML = items.initialHeadInnerHTML
+        })
+
         setModalState(false)
         setSaving(false)
         setSaveButtonText("SAVE CHANGES")

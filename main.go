@@ -28,12 +28,8 @@ func main() {
 		safeurl := c.Params("safeurl")
 		result, err := handlers.FindContactByUrl(safeurl)
 		if err != nil {
-			c.Status(500)
-			return c.JSON(fiber.Map{"message": "failed to fetch data"})
-		}
-		if result.Id == 0 {
 			c.Status(404)
-			return c.JSON(fiber.Map{"message": "no results for given query"})
+			return c.JSON(fiber.Map{"message": "url not in database"})
 		}
 		return c.JSON(result)
 	})

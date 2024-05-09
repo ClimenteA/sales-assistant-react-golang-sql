@@ -136,7 +136,7 @@ export default function App() {
         </label>
 
         <footer style={{ display: "flex", gap: "2rem", marginTop: "2rem" }}>
-          <button type='submit' disabled={saving}>SAVE CHANGES</button>
+          <button type='submit' disabled={saving}>SAVE CONTACT</button>
         </footer>
         <small style={{ marginTop: "-10px", color: "grey" }}>{savingTextInfo}</small>
       </form>

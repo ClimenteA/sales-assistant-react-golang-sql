@@ -69,7 +69,7 @@ export default function App() {
       email: email.toLowerCase(),
       phone: phone,
       mentions: mentions,
-      url: document.location.href,
+      url: url,
     }
 
     saveContact(payload).then(response => {
@@ -78,6 +78,17 @@ export default function App() {
 
       if (response.message == "success") {
         setSavingTextInfo("Data saved!")
+
+        setRawText("")
+        setUrl("")
+        setStatus("")
+        setName("")
+        setEmail("")
+        setPhone("")
+        setMentions("")
+
+        chrome.storage.local.set({ 'parsedText': null })
+
       } else {
         setSavingTextInfo("Failed to save data! Check if you have the server running.")
         setTimeout(() => setSavingTextInfo(""), 5000)

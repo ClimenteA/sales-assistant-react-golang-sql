@@ -73,6 +73,7 @@ func TextParser(contact ContactInfo) ContactInfo {
 			Phone:    phones,
 			Status:   existingContact.Status,
 			Mentions: existingContact.Mentions,
+			Url:      contact.Url,
 		}
 		return parsedContact
 	}
@@ -84,6 +85,7 @@ func TextParser(contact ContactInfo) ContactInfo {
 		Name:    name,
 		Email:   emails,
 		Phone:   phones,
+		Url:     contact.Url,
 	}
 
 	return parsedContact

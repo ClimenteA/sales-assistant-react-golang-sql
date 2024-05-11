@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"strings"
 
 	repo "github.com/ClimenteA/gobadrepo"
@@ -26,8 +25,6 @@ func FindContactByUrl(url string) (ContactInfo, error) {
 	if strings.HasSuffix(url, "/overlay/contact-info/") && strings.Contains(url, "linkedin.com") {
 		url = strings.Replace(url, "/overlay/contact-info/", "/", 1)
 	}
-
-	fmt.Println("-----------", url)
 
 	var contact ContactInfo
 	err := repo.FindOne(DB, ContactInfo{Url: url}, &contact)

@@ -28,7 +28,7 @@ async function parseRawRext(data: RawData) {
 function toast() {
     let p = document.createElement("p")
     p.innerText = "Text selected! Now open extension to modify and save it."
-    p.style.position = "absolute"
+    p.style.position = "fixed"
     p.style.top = "20px"
     p.style.left = "20px"
     p.style.height = "60px"

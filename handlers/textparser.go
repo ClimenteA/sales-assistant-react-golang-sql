@@ -25,6 +25,7 @@ func findEmails(rawtext string) []string {
 func findPhoneNumbers(rawtext string) []string {
 
 	text := strings.ReplaceAll(rawtext, " ", "")
+	text = strings.ReplaceAll(text, "-", "")
 
 	re := regexp.MustCompile(`\d+`)
 	allNumbers := re.FindAllString(text, -1)
@@ -41,8 +42,17 @@ func findPhoneNumbers(rawtext string) []string {
 
 func findName(contact ContactInfo) string {
 
-	if strings.Contains(contact.Url, "facebook.com") || strings.Contains(contact.Url, "linkedin.com") {
-		return strings.TrimSpace(strings.Split(contact.RawText, "\n")[0])
+	for _, site := range []string{
+		"facebook.com",
+		"instagram.com",
+		"linkedin.com",
+		"twitter.com",
+		"x.com",
+		"threads.net",
+	} {
+		if strings.Contains(contact.Url, site) {
+			return strings.TrimSpace(strings.Split(contact.RawText, "\n")[0])
+		}
 	}
 
 	return ""
@@ -66,13 +76,33 @@ func TextParser(contact ContactInfo) ContactInfo {
 			name = existingContact.Name
 		}
 
+		if name == "" && existingContact.Name != "" {
+			name = existingContact.Name
+		}
+
+		if emails == "" && existingContact.Email != "" {
+			emails = existingContact.Email
+		}
+
+		if phones == "" && existingContact.Phone != "" {
+			phones = existingContact.Phone
+		}
+
+		if contact.Status == "" && existingContact.Status != "" {
+			contact.Status = existingContact.Status
+		}
+
+		if contact.Mentions == "" && existingContact.Mentions != "" {
+			contact.Mentions = existingContact.Mentions
+		}
+
 		parsedContact := ContactInfo{
 			RawText:  contact.RawText,
 			Name:     name,
 			Email:    emails,
 			Phone:    phones,
-			Status:   existingContact.Status,
-			Mentions: existingContact.Mentions,
+			Status:   contact.Status,
+			Mentions: contact.Mentions,
 			Url:      contact.Url,
 		}
 		return parsedContact

@@ -52,7 +52,7 @@ export default function App() {
 
   let [status, setStatus] = useState("")
   let [name, setName] = useState("")
-  let [nameList, setNameList] = useState([])
+  let [nameList, setNameList] = useState<ParsedText[]>([])
   let [email, setEmail] = useState("")
   let [phone, setPhone] = useState("")
   let [mentions, setMentions] = useState("")
@@ -74,13 +74,13 @@ export default function App() {
           setEmail(parsedText.email)
           setPhone(parsedText.phone)
           setMentions(parsedText.mentions)
+          chrome.storage.local.set({ 'parsedText': null })
         }
       }
     })
 
     if (name.length > 0) {
       findContactByColumn("name", name).then((data) => {
-        console.log("helooo", data)
         setNameList(data)
       })
     }
@@ -153,10 +153,21 @@ export default function App() {
 
         <label>
           <strong>Name</strong>
-          <input list="names" type="text" name="name" value={name} onChange={e => setName(e.target.value)} />
+          <input list="names" type="text" name="name" value={name} onChange={e => {
+            setName(e.target.value)
+            const selectedItem = nameList.find(item => item.name === e.target.value)
+            if (selectedItem) {
+              setRawText(selectedItem.raw_text)
+              setUrl(selectedItem.url)
+              setStatus(selectedItem.status)
+              setEmail(selectedItem.email)
+              setPhone(selectedItem.phone)
+              setMentions(selectedItem.mentions)
+            }
+          }} />
           <datalist id="names">
             {nameList.map((item: ParsedText, index: number) => (
-              <option key={index} value={item.name} onClick={() => setName(item.name)} />
+              <option key={index} value={item.name} />
             ))}
           </datalist>
         </label>

@@ -78,8 +78,15 @@ func SaveContact(contact ContactInfo) error {
 		mentions = existingContact.Mentions
 	}
 
+	rawText := ""
+	if existingContact.RawText == contact.RawText {
+		rawText = contact.RawText
+	} else {
+		rawText = existingContact.RawText + "\n" + contact.RawText
+	}
+
 	concatContact := ContactInfo{
-		RawText:  existingContact.RawText + "\n" + contact.RawText,
+		RawText:  rawText,
 		Name:     name,
 		Status:   status,
 		Email:    email,

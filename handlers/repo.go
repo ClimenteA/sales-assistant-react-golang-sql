@@ -34,6 +34,15 @@ func FindContactByUrl(url string) (ContactInfo, error) {
 	return contact, nil
 }
 
+func FindContactByName(partialContact ContactInfo) ([]ContactInfo, error) {
+	contacts := []ContactInfo{}
+	err := DB.Select(&contacts, "SELECT * FROM contactinfos WHERE name LIKE ? LIMIT 20", "%"+partialContact.Name+"%")
+	if err != nil {
+		return contacts, err
+	}
+	return contacts, nil
+}
+
 func SaveContact(contact ContactInfo) error {
 
 	existingContact, err := FindContactByUrl(contact.Url)

@@ -48,6 +48,19 @@ func main() {
 		return c.JSON(fiber.Map{"message": "success"})
 	})
 
+	app.Post("/find-contact", func(c *fiber.Ctx) error {
+		var err error
+		contact := new(handlers.ContactInfo)
+		if err = c.BodyParser(contact); err != nil {
+			return err
+		}
+		foundContact, err := handlers.FindContactByName(*contact)
+		if err != nil {
+			return c.JSON(contact)
+		}
+		return c.JSON(foundContact)
+	})
+
 	err := app.Listen(":" + os.Getenv("SALES_ASSISTANT_PORT"))
 	if err != nil {
 		log.Fatal(err.Error())

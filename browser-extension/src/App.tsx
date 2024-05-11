@@ -24,10 +24,35 @@ async function saveContact(data: ParsedText) {
 }
 
 
+
+async function findContactByColumn(column: string, value: string) {
+
+  try {
+
+    let response = await fetch(`http://localhost:${PORT}/find-contact`, {
+      method: "POST",
+      body: JSON.stringify({ column, value }),
+      headers: headers
+    })
+
+    let parsed = await response.json()
+    return parsed
+
+  } catch (error) {
+    console.error(error)
+  }
+
+  alert(`Check if server is running on port ${PORT}!`)
+
+}
+
+
+
 export default function App() {
 
   let [status, setStatus] = useState("")
   let [name, setName] = useState("")
+  let [nameList, setNameList] = useState([])
   let [email, setEmail] = useState("")
   let [phone, setPhone] = useState("")
   let [mentions, setMentions] = useState("")
@@ -41,19 +66,26 @@ export default function App() {
     chrome.storage.local.get(['parsedText'], function (items) {
       if (items.parsedText) {
         let parsedText: ParsedText = items.parsedText
-
-        setRawText(parsedText.raw_text)
-        setUrl(parsedText.url)
-        setStatus(parsedText.status)
-        setName(parsedText.name)
-        setEmail(parsedText.email)
-        setPhone(parsedText.phone)
-        setMentions(parsedText.mentions)
-
+        if (parsedText.raw_text != raw_text) {
+          setRawText(parsedText.raw_text)
+          setUrl(parsedText.url)
+          setStatus(parsedText.status)
+          setName(parsedText.name)
+          setEmail(parsedText.email)
+          setPhone(parsedText.phone)
+          setMentions(parsedText.mentions)
+        }
       }
     })
 
-  }, [])
+    if (name.length > 0) {
+      findContactByColumn("name", name).then((data) => {
+        console.log("helooo", data)
+        setNameList(data)
+      })
+    }
+
+  }, [name])
 
 
   function handleSubmit(event: FormEvent) {
@@ -97,7 +129,6 @@ export default function App() {
 
   }
 
-
   return (
 
     <main style={{ width: "600px", paddingTop: "1rem", paddingBottom: "2rem", marginLeft: "20px", marginRight: "20px" }}>
@@ -122,7 +153,12 @@ export default function App() {
 
         <label>
           <strong>Name</strong>
-          <input type="text" name="name" value={name} onChange={e => setName(e.target.value)} />
+          <input list="names" type="text" name="name" value={name} onChange={e => setName(e.target.value)} />
+          <datalist id="names">
+            {nameList.map((item: ParsedText, index: number) => (
+              <option key={index} value={item.name} onClick={() => setName(item.name)} />
+            ))}
+          </datalist>
         </label>
 
         <label>

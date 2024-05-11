@@ -37,9 +37,11 @@ function toast() {
     p.style.padding = "1rem"
     p.style.borderRadius = "8px"
     p.style.zIndex = "calc(infinity)"
+    p.style.fontSize = "16px !important"
     document.body.appendChild(p)
     setTimeout(() => p.remove(), 5000)
 }
+
 
 function rightClickModalHandler(event: MouseEvent) {
 

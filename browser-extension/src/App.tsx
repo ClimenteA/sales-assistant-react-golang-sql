@@ -36,6 +36,7 @@ async function findContactByColumn(column: string, value: string) {
     })
 
     let parsed = await response.json()
+    console.log(parsed)
     return parsed
 
   } catch (error) {
@@ -52,7 +53,6 @@ export default function App() {
 
   let [status, setStatus] = useState("")
   let [name, setName] = useState("")
-  let [nameList, setNameList] = useState<ParsedText[]>([])
   let [email, setEmail] = useState("")
   let [phone, setPhone] = useState("")
   let [mentions, setMentions] = useState("")
@@ -60,6 +60,8 @@ export default function App() {
   let [savingTextInfo, setSavingTextInfo] = useState("")
   let [raw_text, setRawText] = useState("")
   let [url, setUrl] = useState("")
+  let [statusList, setStatusList] = useState<ParsedText[]>([])
+  let [nameList, setNameList] = useState<ParsedText[]>([])
 
   useEffect(() => {
 
@@ -85,7 +87,13 @@ export default function App() {
       })
     }
 
-  }, [name])
+    if (status.length > 0) {
+      findContactByColumn("status", status).then((data) => {
+        setStatusList(data)
+      })
+    }
+
+  }, [name, status])
 
 
   function handleSubmit(event: FormEvent) {
@@ -135,10 +143,10 @@ export default function App() {
 
       <h3 style={{ fontWeight: "bold", marginTop: "1rem" }}>Contact info</h3>
       <p style={{ color: "grey" }}>
+        Select text and right click.
         Fields will be updated automatically.
         Please correct inconsistencies if any.
-        <br />
-        Source: {url}
+        You can also add a contact without selecting a text just by filling the fields.
       </p>
 
       <strong style={{ display: "block", marginBottom: "0.2rem", marginTop: "2rem" }}>
@@ -184,9 +192,18 @@ export default function App() {
 
         <label>
           <strong>Status</strong>
-          <input type="text" name="status" value={status} onChange={e => setStatus(e.target.value)} />
+          <input list="statuses" type="text" name="status" value={status} onChange={e => setStatus(e.target.value)} />
+          <datalist id="statuses">
+            {statusList.map((item: ParsedText, index: number) => (
+              <option key={index} value={item.status} onClick={() => setStatus(item.status)} />
+            ))}
+          </datalist>
         </label>
 
+        <label>
+          <strong>Url</strong>
+          <input type="text" name="url" value={url} onChange={e => setUrl(e.target.value)} />
+        </label>
 
         <label>
           <strong>Mentions</strong>

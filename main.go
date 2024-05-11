@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"sales-assistant/handlers"
@@ -54,11 +55,14 @@ func main() {
 		if err = c.BodyParser(contact); err != nil {
 			return err
 		}
-		foundContact, err := handlers.FindContactByName(*contact)
+
+		foundContacts, err := handlers.FindContactByNameOrStatus(*contact)
+		fmt.Println(foundContacts)
+
 		if err != nil {
 			return c.JSON(contact)
 		}
-		return c.JSON(foundContact)
+		return c.JSON(foundContacts)
 	})
 
 	err := app.Listen(":" + os.Getenv("SALES_ASSISTANT_PORT"))

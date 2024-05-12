@@ -172,6 +172,23 @@ export default function App() {
 	}, [name, status])
 
 
+
+	function clearForm(e: { preventDefault: () => void }) {
+		e.preventDefault()
+
+		setRawText("")
+		setUrl("")
+		setStatus("")
+		setName("")
+		setEmail("")
+		setPhone("")
+		setMentions("")
+
+		chrome.storage.local.set({ 'parsedText': null })
+		chrome.storage.local.set({ 'pageUrl': null })
+
+	}
+
 	function handleSubmit(event: FormEvent) {
 		event.preventDefault()
 
@@ -194,18 +211,7 @@ export default function App() {
 
 			if (response.message == "success") {
 				setSavingTextInfo("Data saved!")
-
-				setRawText("")
-				setUrl("")
-				setStatus("")
-				setName("")
-				setEmail("")
-				setPhone("")
-				setMentions("")
-
-				chrome.storage.local.set({ 'parsedText': null })
-				chrome.storage.local.set({ 'pageUrl': null })
-
+				clearForm(event)
 			} else {
 				setSavingTextInfo("Failed to save data! Check if you have the server running.")
 				setTimeout(() => setSavingTextInfo(""), 5000)
@@ -266,7 +272,8 @@ export default function App() {
 			</p>
 
 			<div style={{ display: "flex", justifyContent: "end" }}>
-				<a href="#" aria-disabled={exportData} onClick={triggerExportData}>{exportDataText}</a>
+				<a href="#" onClick={clearForm}>Clear form</a>
+				<a style={{ marginLeft: "1rem" }} href="#" aria-disabled={exportData} onClick={triggerExportData}>{exportDataText}</a>
 				<a style={{ marginLeft: "1rem" }} href="#" aria-disabled={importData} onClick={triggerImportData}>{importDataText}</a>
 			</div>
 

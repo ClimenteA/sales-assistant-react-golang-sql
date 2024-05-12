@@ -1,7 +1,11 @@
 package handlers
 
 import (
+	"encoding/csv"
 	"fmt"
+	"os"
+	"path"
+	"strconv"
 	"strings"
 
 	repo "github.com/ClimenteA/gobadrepo"
@@ -134,4 +138,79 @@ func SaveContact(contact ContactInfo) error {
 
 	return nil
 
+}
+
+func ExportTable() error {
+
+	err := os.MkdirAll("exports", os.ModePerm)
+	if err != nil {
+		return err
+	}
+
+	rows, err := DB.Queryx("SELECT * FROM contactinfos")
+	if err != nil {
+		return err
+	}
+
+	var csvFile *os.File
+	writer := &csv.Writer{}
+
+	counter := 0
+	fileCounter := 0
+
+	// Write data to CSV
+	for rows.Next() {
+		// Create a new file every 500,000 rows
+		if counter%500000 == 0 {
+			if csvFile != nil {
+				writer.Flush()
+				csvFile.Close()
+			}
+
+			csvfilepath := path.Join("exports", fmt.Sprintf("contacts_export_%d.csv", fileCounter))
+			csvFile, err = os.Create(csvfilepath)
+			if err != nil {
+				return err
+			}
+			defer csvFile.Close()
+
+			writer = csv.NewWriter(csvFile)
+			defer writer.Flush()
+
+			// Write the header
+			header := []string{"Id", "RawText", "Name", "Status", "Email", "Phone", "Mentions", "Url"}
+			err = writer.Write(header)
+			if err != nil {
+				return err
+			}
+
+			fileCounter++
+		}
+
+		var contact ContactInfo
+		err = rows.StructScan(&contact)
+		if err != nil {
+			return err
+		}
+
+		vals := []string{
+			strconv.Itoa(contact.Id),
+			contact.RawText,
+			contact.Name,
+			contact.Status,
+			contact.Email,
+			contact.Phone,
+			contact.Mentions,
+			contact.Url,
+		}
+
+		err = writer.Write(vals)
+		if err != nil {
+			return err
+		}
+
+		counter++
+	}
+
+	return nil
 }

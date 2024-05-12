@@ -281,11 +281,6 @@ export default function App() {
 			<form onSubmit={handleSubmit} style={{ marginTop: "2rem" }}>
 
 				<label>
-					<strong>Url</strong>
-					<input type="text" name="url" value={url} onChange={e => setUrl(e.target.value)} />
-				</label>
-
-				<label>
 					<strong>Name</strong>
 					<input list="names" type="text" name="name" value={name} onChange={e => {
 						setName(e.target.value)
@@ -331,6 +326,12 @@ export default function App() {
 					<strong>Mentions</strong>
 					<textarea name="mentions" value={mentions} onChange={e => setMentions(e.target.value)}></textarea>
 				</label>
+
+				<label>
+					<strong>Url</strong>
+					<input type="text" name="url" value={url} onChange={e => setUrl(e.target.value)} />
+				</label>
+
 
 				<footer style={{ display: "flex", flexDirection: "column", gap: "2rem", marginTop: "2rem" }}>
 					<button type='submit' disabled={saving}>SAVE CONTACT</button>

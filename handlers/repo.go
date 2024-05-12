@@ -3,8 +3,10 @@ package handlers
 import (
 	"encoding/csv"
 	"fmt"
+	"io"
 	"os"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -140,7 +142,7 @@ func SaveContact(contact ContactInfo) error {
 
 }
 
-func ExportTable() error {
+func ExportTables() error {
 
 	err := os.MkdirAll("exports", os.ModePerm)
 	if err != nil {
@@ -210,6 +212,77 @@ func ExportTable() error {
 		}
 
 		counter++
+	}
+
+	return nil
+}
+
+func ImportTables() error {
+	// Get all CSV files from the 'exports' directory
+	files, err := filepath.Glob("exports/*.csv")
+	if err != nil {
+		return err
+	}
+
+	// Iterate over each file
+	for _, file := range files {
+		f, err := os.Open(file)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		r := csv.NewReader(f)
+
+		// Skip the header row
+		_, err = r.Read()
+		if err != nil {
+			return err
+		}
+
+		// Read each record from csv
+		for {
+			record, err := r.Read()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				return err
+			}
+
+			// Convert the record to ContactInfo
+			id, err := strconv.Atoi(record[0])
+			if err != nil {
+				return err
+			}
+
+			contact := ContactInfo{
+				Id:       id,
+				RawText:  record[1],
+				Name:     record[2],
+				Status:   record[3],
+				Email:    record[4],
+				Phone:    record[5],
+				Mentions: record[6],
+				Url:      record[7],
+			}
+
+			// Insert or update the record in the database
+			_, err = DB.NamedExec(`INSERT INTO contactinfos (id, raw_text, name, status, email, phone, mentions, url) 
+				VALUES (:id, :raw_text, :name, :status, :email, :phone, :mentions, :url)
+				ON CONFLICT(id) DO UPDATE SET
+				raw_text = excluded.raw_text,
+				name = excluded.name,
+				status = excluded.status,
+				email = excluded.email,
+				phone = excluded.phone,
+				mentions = excluded.mentions,
+				url = excluded.url`, &contact)
+			if err != nil {
+				fmt.Println(err)
+				return err
+			}
+		}
 	}
 
 	return nil

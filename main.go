@@ -25,13 +25,22 @@ func main() {
 	app.Use(logger.New())
 	app.Use(recover.New())
 
-	app.Post("/export-database", func(c *fiber.Ctx) error {
-		err := handlers.ExportTable()
+	app.Post("/export-tables", func(c *fiber.Ctx) error {
+		err := handlers.ExportTables()
 		if err != nil {
 			c.Status(500)
-			return c.JSON(fiber.Map{"message": "failed to export data to downloads"})
+			return c.JSON(fiber.Map{"message": "failed to export data"})
 		}
-		return c.JSON(fiber.Map{"message": "data exported to downloads"})
+		return c.JSON(fiber.Map{"message": "data exported"})
+	})
+
+	app.Post("/import-tables", func(c *fiber.Ctx) error {
+		err := handlers.ImportTables()
+		if err != nil {
+			c.Status(500)
+			return c.JSON(fiber.Map{"message": "failed to import data"})
+		}
+		return c.JSON(fiber.Map{"message": "data imported"})
 	})
 
 	app.Post("/parse-text", func(c *fiber.Ctx) error {

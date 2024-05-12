@@ -53,7 +53,29 @@ async function triggerExportDataToDownloads() {
 
 	try {
 
-		let response = await fetch(`http://localhost:${PORT}/export-database`, {
+		let response = await fetch(`http://localhost:${PORT}/export-tables`, {
+			method: "POST",
+			headers: headers
+		})
+
+		let parsed = await response.json()
+		console.log(parsed)
+		return parsed
+
+	} catch (error) {
+		console.error(error)
+	}
+
+	alert(`Check if server is running on port ${PORT}!`)
+
+}
+
+
+async function triggerImportDataToDownloads() {
+
+	try {
+
+		let response = await fetch(`http://localhost:${PORT}/import-tables`, {
 			method: "POST",
 			headers: headers
 		})
@@ -86,6 +108,8 @@ export default function App() {
 	let [nameList, setNameList] = useState<ParsedText[]>([])
 	let [exportData, setExportData] = useState(false)
 	let [exportDataText, setExportDataText] = useState("Export data to CSV's")
+	let [importData, setImportData] = useState(false)
+	let [importDataText, setImportDataText] = useState("Import data from CSV's")
 
 
 	useEffect(() => {
@@ -198,12 +222,31 @@ export default function App() {
 		setExportDataText("Data is being exported...")
 
 		triggerExportDataToDownloads().then(res => {
-			if (res.message == "data exported to downloads") {
+			if (res.message == "data exported") {
 				setExportData(false)
 				setExportDataText("Data was exported!")
-				setTimeout(() => setExportDataText("Export data to CSV's"), 3000)
+				setTimeout(() => setExportDataText("Export data from CSV's"), 3000)
 			} else {
 				setExportDataText("Failed to export data. Please check for errors.")
+			}
+		})
+
+	}
+
+
+	function triggerImportData(e: { preventDefault: () => void }) {
+		e.preventDefault()
+
+		setImportData(true)
+		setImportDataText("Data is being imported...")
+
+		triggerImportDataToDownloads().then(res => {
+			if (res.message == "data imported") {
+				setImportData(false)
+				setImportDataText("Data was imported!")
+				setTimeout(() => setImportDataText("Import data to CSV's"), 3000)
+			} else {
+				setImportDataText("Failed to import data. Please check for errors.")
 			}
 		})
 
@@ -222,7 +265,10 @@ export default function App() {
 				You can also add a contact without selecting a text just by filling the fields.
 			</p>
 
-			<a href="#" aria-disabled={exportData} onClick={triggerExportData}>{exportDataText}</a>
+			<div style={{ display: "flex", justifyContent: "end" }}>
+				<a href="#" aria-disabled={exportData} onClick={triggerExportData}>{exportDataText}</a>
+				<a style={{ marginLeft: "1rem" }} href="#" aria-disabled={importData} onClick={triggerImportData}>{importDataText}</a>
+			</div>
 
 			<strong style={{ display: "block", marginBottom: "0.2rem", marginTop: "2rem" }}>
 				Selected
@@ -286,7 +332,7 @@ export default function App() {
 					<textarea name="mentions" value={mentions} onChange={e => setMentions(e.target.value)}></textarea>
 				</label>
 
-				<footer style={{ display: "flex", gap: "2rem", marginTop: "2rem" }}>
+				<footer style={{ display: "flex", flexDirection: "column", gap: "2rem", marginTop: "2rem" }}>
 					<button type='submit' disabled={saving}>SAVE CONTACT</button>
 				</footer>
 				<small style={{ marginTop: "-10px", color: "grey" }}>{savingTextInfo}</small>

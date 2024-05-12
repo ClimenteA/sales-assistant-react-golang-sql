@@ -189,6 +189,11 @@ export default function App() {
       <form onSubmit={handleSubmit} style={{ marginTop: "2rem" }}>
 
         <label>
+          <strong>Url</strong>
+          <input type="text" name="url" value={url} onChange={e => setUrl(e.target.value)} />
+        </label>
+
+        <label>
           <strong>Name</strong>
           <input list="names" type="text" name="name" value={name} onChange={e => {
             setName(e.target.value)
@@ -228,11 +233,6 @@ export default function App() {
               <option key={index} value={item.status} />
             ))}
           </datalist>
-        </label>
-
-        <label>
-          <strong>Url</strong>
-          <input type="text" name="url" value={url} onChange={e => setUrl(e.target.value)} />
         </label>
 
         <label>

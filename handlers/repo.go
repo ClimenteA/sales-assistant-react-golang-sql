@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"strings"
 
 	repo "github.com/ClimenteA/gobadrepo"
@@ -54,6 +55,14 @@ func FindContactByColumValue(partialContact FilterContact) ([]ContactInfo, error
 		return contacts, nil
 	}
 
+	if partialContact.Column == "url" {
+		err := DB.Select(&contacts, "SELECT * FROM contactinfos WHERE url=?", partialContact.Value)
+		if err != nil {
+			return contacts, err
+		}
+		return contacts, nil
+	}
+
 	return contacts, nil
 }
 
@@ -63,8 +72,12 @@ func SaveContact(contact ContactInfo) error {
 
 	if err != nil {
 		log.Info("New contact:", contact)
-		err = repo.InsertOne(DB, contact)
-		return err
+		if len(contact.Name) > 0 {
+			err = repo.InsertOne(DB, contact)
+			return err
+		} else {
+			return fmt.Errorf("field name is mandatory")
+		}
 	}
 
 	name := contact.Name
@@ -109,10 +122,14 @@ func SaveContact(contact ContactInfo) error {
 		Url:      existingContact.Url,
 	}
 
-	log.Infof("\nUpdated contact: %+v", concatContact)
-	err = repo.UpdateMany(DB, ContactInfo{Id: existingContact.Id}, concatContact)
-	if err != nil {
-		return err
+	if len(concatContact.Name) > 0 {
+		log.Infof("\nUpdated contact: %+v", concatContact)
+		err = repo.UpdateMany(DB, ContactInfo{Id: existingContact.Id}, concatContact)
+		if err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf("field name is mandatory")
 	}
 
 	return nil

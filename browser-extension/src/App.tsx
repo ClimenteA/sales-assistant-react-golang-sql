@@ -29,16 +29,14 @@ async function findContactByColumn(column: string, value: string) {
 
   try {
 
-    let payload = { column, value }
-
     let response = await fetch(`http://localhost:${PORT}/find-contact`, {
       method: "POST",
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ column, value }),
       headers: headers
     })
 
     let parsed = await response.json()
-    console.log(payload, parsed)
+    console.log(parsed)
     return parsed
 
   } catch (error) {
@@ -65,23 +63,51 @@ export default function App() {
   let [statusList, setStatusList] = useState<ParsedText[]>([])
   let [nameList, setNameList] = useState<ParsedText[]>([])
 
+
+  useEffect(() => {
+
+    chrome.storage.local.get(['parsedText', 'pageUrl'], function (items) {
+
+      if (items.pageUrl && items.parsedText == null) {
+        findContactByColumn("url", items.pageUrl).then((data) => {
+          if (data.length > 0) {
+            let parsedText = data[0]
+            setRawText(parsedText.raw_text)
+            setUrl(parsedText.url)
+            setStatus(parsedText.status)
+            setName(parsedText.name)
+            setEmail(parsedText.email)
+            setPhone(parsedText.phone)
+            setMentions(parsedText.mentions)
+          }
+        })
+      }
+
+    })
+
+  }, [])
+
+
   useEffect(() => {
 
     chrome.storage.local.get(['parsedText'], function (items) {
-      if (items.parsedText) {
-        let parsedText: ParsedText = items.parsedText
-        if (parsedText.raw_text != raw_text) {
-          setRawText(parsedText.raw_text)
-          setUrl(parsedText.url)
-          setStatus(parsedText.status)
-          setName(parsedText.name)
-          setEmail(parsedText.email)
-          setPhone(parsedText.phone)
-          setMentions(parsedText.mentions)
-          chrome.storage.local.set({ 'parsedText': null })
-        }
+      if (items.parsedText != null) {
+        let parsedText = items.parsedText
+        setRawText(parsedText.raw_text)
+        setUrl(parsedText.url)
+        setStatus(parsedText.status)
+        setName(parsedText.name)
+        setEmail(parsedText.email)
+        setPhone(parsedText.phone)
+        setMentions(parsedText.mentions)
       }
+
     })
+
+  }, [])
+
+
+  useEffect(() => {
 
     if (name.length > 0) {
       findContactByColumn("name", name).then((data) => {
@@ -130,6 +156,7 @@ export default function App() {
         setMentions("")
 
         chrome.storage.local.set({ 'parsedText': null })
+        chrome.storage.local.set({ 'pageUrl': null })
 
       } else {
         setSavingTextInfo("Failed to save data! Check if you have the server running.")

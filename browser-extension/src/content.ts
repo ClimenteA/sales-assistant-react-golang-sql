@@ -25,23 +25,6 @@ async function parseRawRext(data: RawData) {
 }
 
 
-function toast() {
-    let p = document.createElement("p")
-    p.innerText = "Text selected! Now open extension to modify and save it."
-    p.style.position = "fixed"
-    p.style.top = "20px"
-    p.style.left = "20px"
-    p.style.height = "60px"
-    p.style.backgroundColor = "black"
-    p.style.color = "white"
-    p.style.padding = "1rem"
-    p.style.borderRadius = "8px"
-    p.style.zIndex = "calc(infinity)"
-    p.style.fontSize = "16px !important"
-    document.body.appendChild(p)
-    setTimeout(() => p.remove(), 5000)
-}
-
 
 function rightClickModalHandler(event: MouseEvent) {
 
@@ -57,10 +40,26 @@ function rightClickModalHandler(event: MouseEvent) {
         console.log("parsedText:", parsedText)
         chrome.storage.local.set({ 'parsedText': parsedText })
         window.getSelection()?.removeAllRanges()
-        toast()
+        let p = document.createElement("p")
+        p.innerText = "Text selected! Now open extension to modify and save it."
+        p.style.position = "fixed"
+        p.style.top = "20px"
+        p.style.left = "20px"
+        p.style.height = "60px"
+        p.style.backgroundColor = "black"
+        p.style.color = "white"
+        p.style.padding = "1rem"
+        p.style.borderRadius = "8px"
+        p.style.zIndex = "calc(infinity)"
+        p.style.fontSize = "16px !important"
+        document.body.appendChild(p)
+        setTimeout(() => p.remove(), 5000)
     })
 
 }
 
+
+chrome.storage.local.set({ 'pageUrl': document.location.href })
+chrome.storage.local.set({ 'parsedText': null })
 
 document.addEventListener('contextmenu', rightClickModalHandler)

@@ -21,4 +21,3 @@ export type ParsedText = {
     mentions: string
     url: string
 }
-

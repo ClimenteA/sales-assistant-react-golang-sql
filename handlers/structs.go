@@ -10,3 +10,8 @@ type ContactInfo struct {
 	Mentions string `json:"mentions" db:"mentions"`
 	Url      string `json:"url" db:"url"`
 }
+
+type FilterContact struct {
+	Column string `json:"column"`
+	Value  string `json:"value"`
+}

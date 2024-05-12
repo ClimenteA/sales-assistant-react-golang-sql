@@ -51,16 +51,16 @@ func main() {
 
 	app.Post("/find-contact", func(c *fiber.Ctx) error {
 		var err error
-		contact := new(handlers.ContactInfo)
-		if err = c.BodyParser(contact); err != nil {
+		filterContact := new(handlers.FilterContact)
+		if err = c.BodyParser(filterContact); err != nil {
 			return err
 		}
 
-		foundContacts, err := handlers.FindContactByNameOrStatus(*contact)
+		foundContacts, err := handlers.FindContactByColumValue(*filterContact)
 		fmt.Println(foundContacts)
 
 		if err != nil {
-			return c.JSON(contact)
+			return c.JSON(foundContacts)
 		}
 		return c.JSON(foundContacts)
 	})

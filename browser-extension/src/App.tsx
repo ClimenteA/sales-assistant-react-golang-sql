@@ -29,14 +29,16 @@ async function findContactByColumn(column: string, value: string) {
 
   try {
 
+    let payload = { column, value }
+
     let response = await fetch(`http://localhost:${PORT}/find-contact`, {
       method: "POST",
-      body: JSON.stringify({ column, value }),
+      body: JSON.stringify(payload),
       headers: headers
     })
 
     let parsed = await response.json()
-    console.log(parsed)
+    console.log(payload, parsed)
     return parsed
 
   } catch (error) {
@@ -171,6 +173,7 @@ export default function App() {
               setEmail(selectedItem.email)
               setPhone(selectedItem.phone)
               setMentions(selectedItem.mentions)
+              chrome.storage.local.set({ 'parsedText': selectedItem })
             }
           }} />
           <datalist id="names">
@@ -195,7 +198,7 @@ export default function App() {
           <input list="statuses" type="text" name="status" value={status} onChange={e => setStatus(e.target.value)} />
           <datalist id="statuses">
             {statusList.map((item: ParsedText, index: number) => (
-              <option key={index} value={item.status} onClick={() => setStatus(item.status)} />
+              <option key={index} value={item.status} />
             ))}
           </datalist>
         </label>

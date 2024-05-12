@@ -34,23 +34,27 @@ func FindContactByUrl(url string) (ContactInfo, error) {
 	return contact, nil
 }
 
-func FindContactByNameOrStatus(partialContact ContactInfo) ([]ContactInfo, error) {
+func FindContactByColumValue(partialContact FilterContact) ([]ContactInfo, error) {
 
-	if partialContact.Name != "" {
-		contacts := []ContactInfo{}
-		err := DB.Select(&contacts, "SELECT * FROM contactinfos WHERE name LIKE ? LIMIT 100", "%"+partialContact.Name+"%")
-		if err != nil {
-			return contacts, err
-		}
-		return contacts, nil
-	} else {
-		contacts := []ContactInfo{}
-		err := DB.Select(&contacts, "SELECT DISTINCT status FROM contactinfos WHERE status LIKE ? LIMIT 100", "%"+partialContact.Status+"%")
+	contacts := []ContactInfo{}
+
+	if partialContact.Column == "name" {
+		err := DB.Select(&contacts, "SELECT * FROM contactinfos WHERE name LIKE ? LIMIT 100", "%"+partialContact.Value+"%")
 		if err != nil {
 			return contacts, err
 		}
 		return contacts, nil
 	}
+
+	if partialContact.Column == "status" {
+		err := DB.Select(&contacts, "SELECT DISTINCT status FROM contactinfos WHERE status LIKE ? LIMIT 100", "%"+partialContact.Value+"%")
+		if err != nil {
+			return contacts, err
+		}
+		return contacts, nil
+	}
+
+	return contacts, nil
 }
 
 func SaveContact(contact ContactInfo) error {

@@ -1,7 +1,6 @@
 import { useState, FormEvent, useEffect } from 'react'
-import { ParsedText, headers, PORT } from "./common"
-
-
+import { ParsedText, headers, PORT, findContactByColumn } from "./common"
+import ExportImportLinks from './ExportImportLinks'
 
 async function saveContact(data: ParsedText) {
 
@@ -21,116 +20,6 @@ async function saveContact(data: ParsedText) {
     }
 
     alert(`Check if server is running on port ${PORT}!`)
-
-}
-
-
-async function findContactByColumn(column: string, value: string) {
-
-    try {
-
-        let response = await fetch(`http://localhost:${PORT}/find-contact`, {
-            method: "POST",
-            body: JSON.stringify({ column, value }),
-            headers: headers
-        })
-
-        let parsed = await response.json()
-        console.log(parsed)
-        return parsed
-
-    } catch (error) {
-        console.error(error)
-    }
-
-    alert(`Check if server is running on port ${PORT}!`)
-}
-
-
-
-async function triggerExportOrImport(route: string) {
-
-    try {
-
-        let response = await fetch(`http://localhost:${PORT}/${route}`, {
-            method: "POST",
-            headers: headers
-        })
-
-        let parsed = await response.json()
-        console.log(parsed)
-        return parsed
-
-    } catch (error) {
-        console.error(error)
-    }
-
-    alert(`Check if server is running on port ${PORT}!`)
-
-}
-
-
-async function triggerExportDataToDownloads() {
-    return await triggerExportOrImport("export-tables")
-}
-
-async function triggerImportDataToDownloads() {
-    return await triggerExportOrImport("import-tables")
-}
-
-
-
-function ExportImportLinks() {
-
-    let [exportData, setExportData] = useState(false)
-    let [exportDataText, setExportDataText] = useState("Export data to CSV's")
-    let [importData, setImportData] = useState(false)
-    let [importDataText, setImportDataText] = useState("Import data from CSV's")
-
-
-    function triggerExportData(e: { preventDefault: () => void }) {
-        e.preventDefault()
-
-        setExportData(true)
-        setExportDataText("Data is being exported...")
-
-        triggerExportDataToDownloads().then(res => {
-            if (res.message == "data exported") {
-                setExportData(false)
-                setExportDataText("Data was exported!")
-                setTimeout(() => setExportDataText("Export data from CSV's"), 3000)
-            } else {
-                setExportDataText("Failed to export data. Please check for errors.")
-            }
-        })
-
-    }
-
-
-    function triggerImportData(e: { preventDefault: () => void }) {
-        e.preventDefault()
-
-        setImportData(true)
-        setImportDataText("Data is being imported...")
-
-        triggerImportDataToDownloads().then(res => {
-            if (res.message == "data imported") {
-                setImportData(false)
-                setImportDataText("Data was imported!")
-                setTimeout(() => setImportDataText("Import data to CSV's"), 3000)
-            } else {
-                setImportDataText("Failed to import data. Please check for errors.")
-            }
-        })
-
-    }
-
-    return (
-        <>
-            <a style={{ marginLeft: "1rem" }} href="#" aria-disabled={exportData} onClick={triggerExportData}>{exportDataText}</a>
-            <a style={{ marginLeft: "1rem" }} href="#" aria-disabled={importData} onClick={triggerImportData}>{importDataText}</a>
-        </>
-    )
 
 }
 
@@ -327,7 +216,7 @@ export default function AddContact() {
 
 
             <footer style={{ display: "flex", flexDirection: "column", gap: "2rem", marginTop: "2rem" }}>
-                <button type='submit' disabled={saving}>SAVE CONTACT</button>
+                <button type='submit' disabled={saving}>ADD CONTACT</button>
             </footer>
             <small style={{ marginTop: "-10px", color: "grey" }}>{savingTextInfo}</small>
         </form>

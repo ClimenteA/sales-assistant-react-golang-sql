@@ -21,3 +21,26 @@ export type ParsedText = {
     mentions: string
     url: string
 }
+
+
+
+export async function findContactByColumn(column: string, value: string) {
+
+    try {
+
+        let response = await fetch(`http://localhost:${PORT}/find-contact`, {
+            method: "POST",
+            body: JSON.stringify({ column, value }),
+            headers: headers
+        })
+
+        let parsed = await response.json()
+        console.log(parsed)
+        return parsed
+
+    } catch (error) {
+        console.error(error)
+    }
+
+    alert(`Check if server is running on port ${PORT}!`)
+}

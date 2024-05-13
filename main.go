@@ -80,6 +80,14 @@ func main() {
 		return c.JSON(foundContacts)
 	})
 
+	app.Get("/contacts", func(c *fiber.Ctx) error {
+		contacts, err := handlers.GetAllContacts()
+		if err != nil {
+			return c.JSON(contacts)
+		}
+		return c.JSON(contacts)
+	})
+
 	err := app.Listen(":" + os.Getenv("SALES_ASSISTANT_PORT"))
 	if err != nil {
 		log.Fatal(err.Error())

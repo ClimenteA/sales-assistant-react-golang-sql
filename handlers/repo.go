@@ -27,6 +27,18 @@ func init() {
 	}
 }
 
+func GetAllContacts() ([]ContactInfo, error) {
+
+	contacts := []ContactInfo{}
+
+	err := DB.Select(&contacts, "SELECT name, status, url FROM contactinfos")
+	if err != nil {
+		return contacts, err
+	}
+	return contacts, nil
+
+}
+
 func FindContactByUrl(url string) (ContactInfo, error) {
 
 	if strings.HasSuffix(url, "/overlay/contact-info/") && strings.Contains(url, "linkedin.com") {
@@ -158,8 +170,8 @@ func ExportTables() error {
 
 	// Write data to CSV
 	for rows.Next() {
-		// Create a new file every 500,000 rows
-		if counter%500000 == 0 {
+		// Create a new file every 800,000 rows
+		if counter%800000 == 0 {
 			if csvFile != nil {
 				writer.Flush()
 				csvFile.Close()

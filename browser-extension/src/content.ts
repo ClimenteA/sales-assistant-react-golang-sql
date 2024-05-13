@@ -1,4 +1,4 @@
-import { RawData, headers, PORT } from "./common"
+import { RawData, headers, PORT, ParsedText } from "./common"
 
 
 async function parseRawRext(data: RawData) {
@@ -12,7 +12,7 @@ async function parseRawRext(data: RawData) {
         })
 
         if (response.ok) {
-            let parsed = await response.json()
+            let parsed: ParsedText = await response.json()
             return parsed
         }
 
@@ -38,6 +38,9 @@ function rightClickModalHandler(event: MouseEvent) {
         url: document.location.href,
     }).then(parsedText => {
         console.log("parsedText:", parsedText)
+        if (parsedText) {
+            navigator.clipboard.writeText(parsedText.raw_text)
+        }
         chrome.storage.local.set({ 'parsedText': parsedText })
         window.getSelection()?.removeAllRanges()
         let p = document.createElement("p")

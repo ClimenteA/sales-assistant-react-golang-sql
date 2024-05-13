@@ -48,6 +48,8 @@ func findName(contact ContactInfo) string {
 		"twitter.com",
 		"x.com",
 		"threads.net",
+		"www.google.com/maps/",
+		"bing.com/maps",
 	} {
 		if strings.Contains(contact.Url, site) {
 			return strings.TrimSpace(strings.Split(contact.RawText, "\n")[0])
@@ -55,6 +57,19 @@ func findName(contact ContactInfo) string {
 	}
 
 	return ""
+
+}
+
+func excludeKeywordsInText(text string, excludeKeywords []string) string {
+
+	for _, word := range excludeKeywords {
+		text = strings.ReplaceAll(text, word, "")
+	}
+
+	re := regexp.MustCompile(`\s{2,}`)
+	text = re.ReplaceAllString(text, " ")
+
+	return text
 
 }
 
@@ -72,16 +87,26 @@ func cleanFacebookRawText(text string) string {
 		"Open now",
 		"Price range",
 	}
+	return excludeKeywordsInText(text, excludeKeywords)
+}
 
-	for _, word := range excludeKeywords {
-		text = strings.ReplaceAll(text, word, "")
+func cleanGoogleMapsRawText(text string) string {
+	excludeKeywords := []string{
+		"Overview",
+		"Prices",
+		"Reviews",
+		"About",
+		"Directions",
+		"Save",
+		"Nearby",
+		"Share",
+		"CHECK AVAILABILITY",
+		"Compare prices",
+		"Free cancellation only",
+		"Check in / Check out",
+		"All options",
 	}
-
-	re := regexp.MustCompile(`\s{2,}`)
-	text = re.ReplaceAllString(text, " ")
-
-	return text
-
+	return excludeKeywordsInText(text, excludeKeywords)
 }
 
 func TextParser(contact ContactInfo) ContactInfo {
@@ -90,10 +115,13 @@ func TextParser(contact ContactInfo) ContactInfo {
 		contact.RawText = cleanFacebookRawText(contact.RawText)
 	}
 
+	if strings.Contains(contact.Url, "google.com/maps/place") {
+		contact.RawText = cleanGoogleMapsRawText(contact.RawText)
+	}
+
 	emails := strings.Join(findEmails(contact.RawText), ", ")
 	phones := strings.Join(findPhoneNumbers(contact.RawText), ", ")
 	name := findName(contact)
-
 
 	existingContact, err := FindContactByUrl(contact.Url)
 	if err == nil {

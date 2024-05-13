@@ -25,16 +25,21 @@ async function parseRawRext(data: RawData) {
 }
 
 
+function removeAccents(text: string) {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+}
+
+
 
 function rightClickModalHandler(event: MouseEvent) {
 
-    const raw_text = window.getSelection()?.toString()
+    let raw_text = window.getSelection()?.toString()
     if (!raw_text) return
 
     event.preventDefault()
 
     parseRawRext({
-        raw_text: raw_text,
+        raw_text: removeAccents(raw_text),
         url: document.location.href,
     }).then(parsedText => {
         console.log("parsedText:", parsedText)

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"sales-assistant/handlers"
@@ -75,8 +74,6 @@ func main() {
 		}
 
 		foundContacts, err := handlers.FindContactByColumValue(*filterContact)
-		fmt.Println(foundContacts)
-
 		if err != nil {
 			return c.JSON(foundContacts)
 		}

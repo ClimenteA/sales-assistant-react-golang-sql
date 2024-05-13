@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 
@@ -59,9 +58,37 @@ func findName(contact ContactInfo) string {
 
 }
 
+func cleanFacebookRawText(text string) string {
+	excludeKeywords := []string{
+		"Message",
+		"More",
+		"Posts",
+		"About",
+		"Mentions",
+		"Reviews",
+		"Reels",
+		"Photos",
+		"Intro",
+		"Open now",
+		"Price range",
+	}
+
+	for _, word := range excludeKeywords {
+		text = strings.ReplaceAll(text, word, "")
+	}
+
+	re := regexp.MustCompile(`\s{2,}`)
+	text = re.ReplaceAllString(text, " ")
+
+	return text
+
+}
+
 func TextParser(contact ContactInfo) ContactInfo {
 
-	fmt.Println("TEXT:", contact.RawText)
+	if strings.Contains(contact.Url, "facebook.com") {
+		contact.RawText = cleanFacebookRawText(contact.RawText)
+	}
 
 	emails := strings.Join(findEmails(contact.RawText), ", ")
 	phones := strings.Join(findPhoneNumbers(contact.RawText), ", ")
@@ -69,8 +96,6 @@ func TextParser(contact ContactInfo) ContactInfo {
 
 	existingContact, err := FindContactByUrl(contact.Url)
 	if err == nil {
-
-		fmt.Println("Existing contact")
 
 		if strings.Contains(emails, name) && existingContact.Email == "" {
 			name = existingContact.Name
@@ -107,8 +132,6 @@ func TextParser(contact ContactInfo) ContactInfo {
 		}
 		return parsedContact
 	}
-
-	fmt.Println("New contact")
 
 	parsedContact := ContactInfo{
 		RawText: contact.RawText,

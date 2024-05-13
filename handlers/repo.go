@@ -111,15 +111,8 @@ func SaveContact(contact ContactInfo) error {
 		mentions = existingContact.Mentions
 	}
 
-	rawText := ""
-	if existingContact.RawText == contact.RawText {
-		rawText = contact.RawText
-	} else {
-		rawText = existingContact.RawText + "\n" + contact.RawText
-	}
-
 	concatContact := ContactInfo{
-		RawText:  rawText,
+		RawText:  contact.RawText,
 		Name:     name,
 		Status:   status,
 		Email:    email,
@@ -129,8 +122,11 @@ func SaveContact(contact ContactInfo) error {
 	}
 
 	if len(concatContact.Name) > 0 {
-		log.Infof("\nUpdated contact: %+v", concatContact)
-		err = repo.UpdateMany(DB, ContactInfo{Id: existingContact.Id}, concatContact)
+		err = repo.DeleteMany(DB, ContactInfo{Id: existingContact.Id})
+		if err != nil {
+			return err
+		}
+		err = repo.InsertOne(DB, concatContact)
 		if err != nil {
 			return err
 		}
@@ -279,7 +275,6 @@ func ImportTables() error {
 				mentions = excluded.mentions,
 				url = excluded.url`, &contact)
 			if err != nil {
-				fmt.Println(err)
 				return err
 			}
 		}

@@ -72,22 +72,25 @@ export default function Contacts() {
 
             {
                 contacts.length > 0 ? <div style={{ marginBottom: "2rem", marginTop: "2rem" }}>
-                    <strong style={{ display: "block", marginBottom: "1rem" }}>Filter by column value</strong>
-                    <select value={column} onChange={e => setColumn(e.target.value)} name="column" aria-label="Select column" required>
-                        <option>Name</option>
-                        <option>Status</option>
-                        <option>Email</option>
-                        <option>Phone</option>
-                        <option>Mentions</option>
-                        <option>RawText</option>
-                        <option>Url</option>
-                        <option>Id</option>
-                    </select>
 
-                    <label>
-                        <strong>Value</strong>
+                    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                        <strong style={{ display: "block", marginBottom: "1rem" }}>Column: </strong>
+                        <select style={{ width: "100%" }} value={column} onChange={e => setColumn(e.target.value)} name="column" aria-label="Select column" required>
+                            <option>Name</option>
+                            <option>Status</option>
+                            <option>Email</option>
+                            <option>Phone</option>
+                            <option>Mentions</option>
+                            <option>RawText</option>
+                            <option>Url</option>
+                            <option>Id</option>
+                        </select>
+                    </div>
+
+                    <div style={{ display: "flex", alignItems: "center", gap: "1.7rem" }}>
+                        <strong>Value:</strong>
                         <input type="text" name="value" value={value} onChange={e => setValue(e.target.value)} />
-                    </label>
+                    </div>
 
                 </div> : <p>No contacts saved yet.</p>
             }

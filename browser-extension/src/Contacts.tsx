@@ -99,7 +99,7 @@ export default function Contacts() {
             {
                 contacts.length > 0 ?
                     contacts.map((c, idx) => <a key={idx} style={{ display: "block", marginBottom: "1rem" }} href={c.url} target="_blank">
-                        <strong>{c.status} - {c.name}</strong>
+                        <strong> <span style={{ color: "lightcoral" }}>{c.status}</span> - {c.name}</strong>
                     </a>) : <p>No contacts</p>
             }
 

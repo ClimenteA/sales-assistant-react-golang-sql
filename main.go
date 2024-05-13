@@ -66,6 +66,20 @@ func main() {
 		return c.JSON(fiber.Map{"message": "success"})
 	})
 
+	app.Post("/filter-contacts", func(c *fiber.Ctx) error {
+		var err error
+		filterContact := new(handlers.FilterContact)
+		if err = c.BodyParser(filterContact); err != nil {
+			return err
+		}
+
+		foundContacts, err := handlers.FilterContactsByColumnPartialValue(*filterContact)
+		if err != nil {
+			return c.JSON(foundContacts)
+		}
+		return c.JSON(foundContacts)
+	})
+
 	app.Post("/find-contact", func(c *fiber.Ctx) error {
 		var err error
 		filterContact := new(handlers.FilterContact)
@@ -73,7 +87,7 @@ func main() {
 			return err
 		}
 
-		foundContacts, err := handlers.FindContactByColumValue(*filterContact)
+		foundContacts, err := handlers.SuggestContactsByColumValue(*filterContact)
 		if err != nil {
 			return c.JSON(foundContacts)
 		}

@@ -23,6 +23,27 @@ async function fetchAllContacts() {
 }
 
 
+export async function filterContactByColumnValuePartial(column: string, value: string) {
+
+    try {
+
+        let response = await fetch(`http://localhost:${PORT}/filter-contacts`, {
+            method: "POST",
+            body: JSON.stringify({ column, value }),
+            headers: headers
+        })
+
+        let parsed = await response.json()
+        console.log("column", column, "value", value, "result", parsed)
+        return parsed
+
+    } catch (error) {
+        console.error(error)
+    }
+
+    alert(`Check if server is running on port ${PORT}!`)
+}
+
 
 
 export default function Contacts() {
@@ -34,13 +55,21 @@ export default function Contacts() {
         fetchAllContacts().then(res => setContacts(res))
     }, [])
 
+    useEffect(() => {
+        if (value.length > 0) {
+            filterContactByColumnValuePartial(column, value).then((data) => {
+                setContacts(data)
+            })
+        }
+    }, [column, value])
+
     return (
         <div style={{ marginTop: "1rem" }}>
 
             <div style={{ marginBottom: "2rem", marginTop: "2rem" }}>
-                <strong style={{ display: "block", marginBottom: "1rem" }}>Filter column</strong>
+                <strong style={{ display: "block", marginBottom: "1rem" }}>Filter by column value</strong>
                 <select value={column} onChange={e => setColumn(e.target.value)} name="column" aria-label="Select column" required>
-                    <option selected>Name</option>
+                    <option>Name</option>
                     <option>Status</option>
                     <option>Email</option>
                     <option>Phone</option>
@@ -57,8 +86,7 @@ export default function Contacts() {
 
             </div>
 
-
-            {contacts.map(c => <a style={{ display: "block", marginBottom: "1rem" }} href={c.url} target="_blank">
+            {contacts && contacts.map((c, idx) => <a key={idx} style={{ display: "block", marginBottom: "1rem" }} href={c.url} target="_blank">
                 <strong>{c.status} - {c.name}</strong>
             </a>)}
 

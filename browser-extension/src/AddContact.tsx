@@ -25,7 +25,7 @@ async function saveContact(data: ParsedText) {
 
 export default function AddContact() {
 
-    let [status, setStatus] = useState("new")
+    let [status, setStatus] = useState("")
     let [name, setName] = useState("")
     let [email, setEmail] = useState("")
     let [phone, setPhone] = useState("")
@@ -122,7 +122,7 @@ export default function AddContact() {
 
         let payload: ParsedText = {
             raw_text: raw_text,
-            status: status,
+            status: status || "new",
             name: name,
             email: email,
             phone: phone,

@@ -94,9 +94,6 @@ func TextParser(contact ContactInfo) ContactInfo {
 	phones := strings.Join(findPhoneNumbers(contact.RawText), ", ")
 	name := findName(contact)
 
-	if contact.Status == "" {
-		contact.Status = "new"
-	}
 
 	existingContact, err := FindContactByUrl(contact.Url)
 	if err == nil {

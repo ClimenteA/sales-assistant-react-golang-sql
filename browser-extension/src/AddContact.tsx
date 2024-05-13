@@ -1,6 +1,5 @@
 import { useState, FormEvent, useEffect } from 'react'
 import { ParsedText, headers, PORT, findContactByColumn } from "./common"
-import ExportImportLinks from './ExportImportLinks'
 
 async function saveContact(data: ParsedText) {
 
@@ -26,7 +25,7 @@ async function saveContact(data: ParsedText) {
 
 export default function AddContact() {
 
-    let [status, setStatus] = useState("")
+    let [status, setStatus] = useState("new")
     let [name, setName] = useState("")
     let [email, setEmail] = useState("")
     let [phone, setPhone] = useState("")
@@ -152,7 +151,6 @@ export default function AddContact() {
 
         <div style={{ display: "flex", justifyContent: "end" }}>
             <a href="#" onClick={clearForm}>Clear form</a>
-            <ExportImportLinks />
         </div>
 
         <form onSubmit={handleSubmit} style={{ marginTop: "2rem" }}>

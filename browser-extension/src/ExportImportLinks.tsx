@@ -79,10 +79,10 @@ export default function ExportImportLinks() {
     }
 
     return (
-        <>
+        <div style={{ display: "flex", justifyContent: "end" }}>
             <a style={{ marginLeft: "1rem" }} href="#" aria-disabled={exportData} onClick={triggerExportData}>{exportDataText}</a>
             <a style={{ marginLeft: "1rem" }} href="#" aria-disabled={importData} onClick={triggerImportData}>{importDataText}</a>
-        </>
+        </div>
     )
 
 }

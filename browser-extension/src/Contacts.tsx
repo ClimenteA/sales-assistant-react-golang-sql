@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { ParsedText, headers, PORT } from "./common"
+import ExportImportLinks from "./ExportImportLinks"
 
 
 async function fetchAllContacts() {
@@ -64,27 +65,32 @@ export default function Contacts() {
     }, [column, value])
 
     return (
+
+
         <div style={{ marginTop: "1rem" }}>
+            {contacts.length > 0 ? <ExportImportLinks /> : null}
 
-            <div style={{ marginBottom: "2rem", marginTop: "2rem" }}>
-                <strong style={{ display: "block", marginBottom: "1rem" }}>Filter by column value</strong>
-                <select value={column} onChange={e => setColumn(e.target.value)} name="column" aria-label="Select column" required>
-                    <option>Name</option>
-                    <option>Status</option>
-                    <option>Email</option>
-                    <option>Phone</option>
-                    <option>Mentions</option>
-                    <option>RawText</option>
-                    <option>Url</option>
-                    <option>Id</option>
-                </select>
+            {
+                contacts.length > 0 ? <div style={{ marginBottom: "2rem", marginTop: "2rem" }}>
+                    <strong style={{ display: "block", marginBottom: "1rem" }}>Filter by column value</strong>
+                    <select value={column} onChange={e => setColumn(e.target.value)} name="column" aria-label="Select column" required>
+                        <option>Name</option>
+                        <option>Status</option>
+                        <option>Email</option>
+                        <option>Phone</option>
+                        <option>Mentions</option>
+                        <option>RawText</option>
+                        <option>Url</option>
+                        <option>Id</option>
+                    </select>
 
-                <label>
-                    <strong>Value</strong>
-                    <input type="text" name="value" value={value} onChange={e => setValue(e.target.value)} />
-                </label>
+                    <label>
+                        <strong>Value</strong>
+                        <input type="text" name="value" value={value} onChange={e => setValue(e.target.value)} />
+                    </label>
 
-            </div>
+                </div> : <p>No contacts saved yet.</p>
+            }
 
             {contacts && contacts.map((c, idx) => <a key={idx} style={{ display: "block", marginBottom: "1rem" }} href={c.url} target="_blank">
                 <strong>{c.status} - {c.name}</strong>

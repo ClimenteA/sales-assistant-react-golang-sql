@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"sales-assistant/handlers"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -102,7 +103,12 @@ func main() {
 		return c.JSON(contacts)
 	})
 
-	err := app.Listen(":" + os.Getenv("SALES_ASSISTANT_PORT"))
+	PORT := os.Getenv("SALES_ASSISTANT_PORT")
+	if len(PORT) == 0 {
+		PORT = strconv.Itoa(4520)
+	}
+
+	err := app.Listen(":" + PORT)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

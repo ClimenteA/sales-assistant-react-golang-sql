@@ -13,8 +13,9 @@ This tool runs on your laptop/pc, it's a browser extension + binary server.
 - Click on `Load unpacked` button and point to `extension` folder;
 - On windows open binary `server.exe` by double clicking it;
 - On Linux/Mac open a terminal where the `server` executable is, type `./server` and press Enter;
-- **Note: Binary server has was created without paying a license to run to Microsoft/Apple so it will show some warnings. You can build binary on your own machine if you want to avoid that**;
 - With the server running you can start navigating the web in search of possible clients or candidates;
+- 
+- **Note: Binary server has was created without paying a license to run to Microsoft/Apple so it will show some warnings. You can build binary on your own machine if you want to avoid that**;
 
 
 ## How to use it

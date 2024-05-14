@@ -1,0 +1,46 @@
+{
+  "name": "Sales Assistant",
+  "version": "0.0.1",
+  "description": "Your loial dumb assistant in sales.",
+  "manifest_version": 3,
+  "author": "Alin Climente",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Sales Assistant"
+  },
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "content_scripts": [
+    {
+      "js": [
+        "assets/content-script-loader.content.ts.b6e8efc4.0224381c.js"
+      ],
+      "run_at": "document_end",
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "resources": [
+        "assets/common.096dbce9.js",
+        "assets/content.ts.b6e8efc4.js"
+      ],
+      "use_dynamic_url": true
+    }
+  ]
+}

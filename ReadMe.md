@@ -56,23 +56,36 @@ You can view/export/import contacts on the on the `Saved Contacts`.
 The browser extension is built with [React(Typescript)](https://react.dev/) with [crxjs vite plugin](https://github.com/crxjs/chrome-extension-tools) and the server is built in [Fiber(Go)](https://gofiber.io/). Data is saved in a [sqlite3 database](https://www.sqlite.org/index.html). 
 
 
+Here are some commands you can use to build the chrome extension from source.
+You need to have [nodejs](https://nodejs.org/en) installed on your machine.
+
+```bash
+npm run build
+```
+
+The `dist` folder will contain the chrome extension. 
+
+
 Here are some commands you can use to build from source the server binary.
+You need to have [Go](https://go.dev/) installed on your machine.
 
 Windows 64bit:
 ```bash
-GOOS=windows GOARCH=amd64 go build -o dist/server.exe main.go
+GOOS=windows GOARCH=amd64 go build -o dist/windows/server.exe main.go
 ```
 
 Linux 64bit:
 ```bash
-GOOS=linux GOARCH=amd64 go build -o dist/server main.go
+GOOS=linux GOARCH=amd64 go build -o dist/linux/server main.go
 ```
 
 Mac 64bit:
 ```bash
-GOOS=darwin GOARCH=amd64 go build -o dist/server main.go
+GOOS=darwin GOARCH=amd64 go build -o dist/mac/server main.go
 ```
 
 Of course, modify these commands as needed for your specific hardware architecture.
 
 
+**NOTE: Port used for requests between chrome extension and server is 4520.**
+If you encounter any issues with the port being occupied you can create next to the binary a `.env` file in which you need to change the port (ex: `SALES_ASSISTANT_PORT=5678`).

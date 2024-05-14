@@ -69,7 +69,7 @@ func SuggestContactsByColumValue(partialContact FilterContact) ([]ContactInfo, e
 	contacts := []ContactInfo{}
 
 	if partialContact.Column == "name" {
-		err := DB.Select(&contacts, "SELECT name FROM contactinfos WHERE name LIKE ?", "%"+partialContact.Value+"%")
+		err := DB.Select(&contacts, "SELECT * FROM contactinfos WHERE name LIKE ?", "%"+partialContact.Value+"%")
 		if err != nil {
 			return contacts, err
 		}

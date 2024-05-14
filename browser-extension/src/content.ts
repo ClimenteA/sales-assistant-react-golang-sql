@@ -67,7 +67,12 @@ function rightClickModalHandler(event: MouseEvent) {
 }
 
 
-chrome.storage.local.set({ 'pageUrl': document.location.href })
-chrome.storage.local.set({ 'parsedText': null })
-
-document.addEventListener('contextmenu', rightClickModalHandler)
+chrome.storage.sync.get(['extension'], function (items) {
+    if (typeof items.extension == "boolean") {
+        if (items.extension === true) {
+            chrome.storage.local.set({ 'pageUrl': document.location.href })
+            chrome.storage.local.set({ 'parsedText': null })
+            document.addEventListener('contextmenu', rightClickModalHandler)
+        }
+    }
+})

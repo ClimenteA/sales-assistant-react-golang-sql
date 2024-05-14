@@ -48,13 +48,30 @@ You can view/export/import contacts on the on the `Saved Contacts`.
 
 ![](./pics/2-saved-contacts-filter.png)
 
-  
+
 
 ## Tech stuff
 
 The browser extension is built with [React(Typescript)](https://react.dev/) with [crxjs vite plugin](https://github.com/crxjs/chrome-extension-tools) and the server is built in [Fiber(Go)](https://gofiber.io/). Data is saved in a [sqlite3 database](https://www.sqlite.org/index.html). 
 
 
+Here are some commands you can use to build from source the server binary.
 
+Windows 64bit:
+```bash
+GOOS=windows GOARCH=amd64 go build -o dist/server.exe main.go
+```
+
+Linux 64bit:
+```bash
+GOOS=linux GOARCH=amd64 go build -o dist/server main.go
+```
+
+Mac 64bit:
+```bash
+GOOS=darwin GOARCH=amd64 go build -o dist/server main.go
+```
+
+Of course, modify these commands as needed for your specific hardware architecture.
 
 

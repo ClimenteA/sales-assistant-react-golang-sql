@@ -68,6 +68,12 @@ function rightClickModalHandler(event: MouseEvent) {
 
 
 chrome.storage.sync.get(['extension'], function (items) {
+
+    if (items.extension == undefined) {
+        items.extension = true
+        chrome.storage.sync.set({ 'extension': true })
+    }
+
     if (typeof items.extension == "boolean") {
         if (items.extension === true) {
             chrome.storage.local.set({ 'pageUrl': document.location.href })

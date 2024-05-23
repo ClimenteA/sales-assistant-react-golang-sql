@@ -18,7 +18,7 @@ async function saveContact(data: ParsedText) {
         console.error(error)
     }
 
-    alert(`Check if server is running on port ${PORT}!`)
+    return { message: "failed" }
 
 }
 

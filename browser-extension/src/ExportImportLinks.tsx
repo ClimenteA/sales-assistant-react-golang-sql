@@ -19,7 +19,7 @@ async function triggerExportOrImport(route: string) {
         console.error(error)
     }
 
-    alert(`Check if server is running on port ${PORT}!`)
+    return { message: "failed" }
 
 }
 

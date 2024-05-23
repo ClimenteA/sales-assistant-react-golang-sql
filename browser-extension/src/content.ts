@@ -1,4 +1,4 @@
-import { RawData, headers, PORT, ParsedText } from "./common"
+import { RawData, headers, PORT, ParsedText, serverIsOnline } from "./common"
 
 
 async function parseRawRext(data: RawData) {
@@ -20,8 +20,7 @@ async function parseRawRext(data: RawData) {
         console.error(error)
     }
 
-    alert(`Check if server is running on port ${PORT}!`)
-
+    return ""
 }
 
 
@@ -69,16 +68,25 @@ function rightClickModalHandler(event: MouseEvent) {
 
 chrome.storage.sync.get(['extension'], function (items) {
 
-    if (items.extension == undefined) {
-        items.extension = true
-        chrome.storage.sync.set({ 'extension': true })
-    }
+    serverIsOnline().then(res => {
 
-    if (typeof items.extension == "boolean") {
-        if (items.extension === true) {
-            chrome.storage.local.set({ 'pageUrl': document.location.href })
-            chrome.storage.local.set({ 'parsedText': null })
-            document.addEventListener('contextmenu', rightClickModalHandler)
+        if (res.message == "failed") {
+            return
         }
-    }
+
+        if (items.extension == undefined) {
+            items.extension = true
+            chrome.storage.sync.set({ 'extension': true })
+        }
+
+        if (typeof items.extension == "boolean") {
+            if (items.extension === true) {
+                chrome.storage.local.set({ 'pageUrl': document.location.href })
+                chrome.storage.local.set({ 'parsedText': null })
+                document.addEventListener('contextmenu', rightClickModalHandler)
+            }
+        }
+
+    })
+
 })

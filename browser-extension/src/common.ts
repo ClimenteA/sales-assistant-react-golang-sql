@@ -42,5 +42,27 @@ export async function findContactByColumn(column: string, value: string) {
         console.error(error)
     }
 
-    alert(`Check if server is running on port ${PORT}!`)
+    return {}
+}
+
+
+
+export async function serverIsOnline() {
+
+    try {
+
+        let response = await fetch(`http://localhost:${PORT}/server-running`, {
+            method: "GET",
+            headers: headers
+        })
+
+        let parsed = await response.json()
+        return parsed
+
+    } catch (error) {
+        console.error(error)
+    }
+
+    return { message: "failed" }
+
 }

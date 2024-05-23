@@ -19,7 +19,7 @@ async function fetchAllContacts() {
         console.error(error)
     }
 
-    alert(`Check if server is running on port ${PORT}!`)
+    return []
 
 }
 
@@ -42,7 +42,7 @@ export async function filterContactByColumnValuePartial(column: string, value: s
         console.error(error)
     }
 
-    alert(`Check if server is running on port ${PORT}!`)
+    return []
 }
 
 
@@ -67,7 +67,6 @@ export default function Contacts() {
     }, [column, value])
 
     return (
-
 
         <div style={{ marginTop: "1rem" }}>
 

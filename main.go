@@ -25,6 +25,10 @@ func main() {
 	app.Use(logger.New())
 	app.Use(recover.New())
 
+	app.Get("/server-running", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{"message": "server is running"})
+	})
+
 	app.Post("/export-tables", func(c *fiber.Ctx) error {
 		err := handlers.ExportTables()
 		if err != nil {

@@ -21,7 +21,7 @@
   "content_scripts": [
     {
       "js": [
-        "assets/content-script-loader.content.ts.40956b59.ac9e40c9.js"
+        "assets/content-script-loader.content.ts.1f6af898.fa387382.js"
       ],
       "run_at": "document_end",
       "matches": [
@@ -37,8 +37,8 @@
         "https://*/*"
       ],
       "resources": [
-        "assets/common.096dbce9.js",
-        "assets/content.ts.40956b59.js"
+        "assets/common.bf752ed5.js",
+        "assets/content.ts.1f6af898.js"
       ],
       "use_dynamic_url": true
     }

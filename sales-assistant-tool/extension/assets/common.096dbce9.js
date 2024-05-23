@@ -1,1 +1,0 @@
-const s=4520,r={Accept:"*/*","Content-Type":"application/json"};async function a(n,e){try{let o=await(await fetch(`http://localhost:${4520}/find-contact`,{method:"POST",body:JSON.stringify({column:n,value:e}),headers:r})).json();return console.log(o),o}catch(t){console.error(t)}alert(`Check if server is running on port ${4520}!`)}export{s as P,a as f,r as h};

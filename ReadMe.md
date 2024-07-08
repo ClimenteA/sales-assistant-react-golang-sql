@@ -3,6 +3,7 @@
 If you are collecting contact information from the web for the purpuse of B2B colaboration or you are a HR profesional looking for candidates - this tool can be helpful.
 It helps you save faster a new contact and keep track in one place of all contacts saved.
 
+[Here](https://www.youtube.com/watch?v=2bLVq_9Mh6o&list=PLXiQl3WyCqwR6kVnS5H_DW5l3aEmwZq7a) a small series on youtube on how I created this project from ideation to completion.  
 
 ## How to install it
 
@@ -14,8 +15,8 @@ This tool runs on your laptop/pc, it's a browser extension + binary server.
 - On windows open binary `server.exe` by double clicking it;
 - On Linux/Mac open a terminal where the `server` executable is, type `./server` and press Enter;
 - With the server running you can start navigating the web in search of possible clients or candidates;
-- 
-- **Note: Binary server has was created without paying a license to run to Microsoft/Apple so it will show some warnings. You can build binary on your own machine if you want to avoid that**;
+
+**Note: Binary server has was created without paying a license to run to Microsoft/Apple so it will show some warnings. You can build binary on your own machine if you want to avoid that**;
 
 
 ## How to use it

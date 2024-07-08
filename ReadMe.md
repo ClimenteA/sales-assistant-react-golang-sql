@@ -3,7 +3,7 @@
 If you are collecting contact information from the web for the purpuse of B2B colaboration or you are a HR profesional looking for candidates - this tool can be helpful.
 It helps you save faster a new contact and keep track in one place of all contacts saved.
 
-[Here](https://www.youtube.com/watch?v=2bLVq_9Mh6o&list=PLXiQl3WyCqwR6kVnS5H_DW5l3aEmwZq7a) a small series on youtube on how I created this project from ideation to completion.  
+[Here is a small series on youtube](https://www.youtube.com/watch?v=2bLVq_9Mh6o&list=PLXiQl3WyCqwR6kVnS5H_DW5l3aEmwZq7a) on how I created this project from ideation to completion.  
 
 ## How to install it
 
